@@ -1,0 +1,107 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: url('../images/background-image3.jpg') no-repeat center center fixed;
+    background-size: cover;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-box {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+}
+
+.login-box h2 {
+    margin-bottom: 20px;
+    font-weight: 600;
+    font-size: 2rem;
+}
+
+.input-box {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 10px 40px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.input-box i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+}
+
+.forgot-password {
+    text-align: right;
+    margin-bottom: 20px;
+}
+
+.forgot-password a {
+    font-size: 0.9rem;
+    text-decoration: none;
+    color: #6c63ff;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);
+    border: none;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease; /* Transición suave para el fondo */
+    background-size: 200% 100%; /* Duplicar el tamaño del fondo para animarlo */
+    background-position: 0% 0%; /* Posición inicial del fondo */
+    transition: background-position 1s ease, border-radius 1s ease;
+}
+
+button:hover {
+    background-position: 100% 0%;
+}
+
+.signup-link {
+    margin-top: 20px;
+}
+
+.signup-link a {
+    font-size: 0.9rem;
+    text-decoration: none;
+    color: #6c63ff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .login-box {
+        width: 85%;
+    }
+}

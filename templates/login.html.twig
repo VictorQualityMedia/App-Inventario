@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="login-box">
+            <h2>Login</h2>
+            <form>
+                <div class="input-box">
+                    <i class="fa fa-user"></i>
+                    <input type="text" placeholder="Introduce tu correo" required>
+                </div>
+                <div class="input-box">
+                    <i class="fa fa-lock"></i>
+                    <input type="password" placeholder="Introduce tu contraseña" required>
+                </div>
+                <button type="submit">Inicia sesión</button>
+                <div class="signup-link">
+                    <a href="{{ path('registro') }}">Regístrate aquí</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

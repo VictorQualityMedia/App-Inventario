@@ -1,0 +1,58 @@
+body {
+  height: 100vh; /* Altura completa del viewport */
+  margin: 0;
+  display: flex;
+  flex-direction: column; /* Para respetar la cabecera fija */
+  font-family: "Open Sans", sans-serif;
+  line-height: 1.25;
+  background: url('../images/background-image6.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
+
+.contenedor_padre {
+  margin-top: 62px; /* Espacio para la cabecera */
+  flex: 1; /* Para que ocupe el espacio restante del body */
+  display: flex;
+  flex-wrap: wrap; /* Permite que los elementos se envuelvan */
+  justify-content: center; /* Alinea horizontalmente en el centro */
+  gap: 10px; /* Espacio entre los divs hijos */
+  align-items: center;
+}
+
+.contenedor_hijo {
+  width: 25%;
+  height: 350px;
+  padding: 2rem;
+  background-color: aliceblue;
+  border-radius: 25px;
+  border: 2px solid black;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra los elementos horizontalmente */
+  margin: 30px;
+  transition: transform 0.5s ease; /* Cambia a "transform" para la transición */
+}
+
+a {
+  display: flex; /* Hacer que el enlace sea un contenedor flex */
+  flex-direction: column; /* Alinear elementos en columna */
+  align-items: center; /* Centrar elementos horizontalmente */
+  justify-content: center; /* Centrar verticalmente el contenido */
+  height: 100%; /* Ocupa toda la altura del contenedor */
+  text-decoration: none;
+  color: black;
+}
+
+.contenedor_hijo:hover {
+  transform: scale(1.05); /* Usa "transform" con "scale" */
+}
+
+.contenedor_hijo img {
+  max-width: 80%; /* Asegúrate de que la imagen no exceda el ancho del contenedor */
+  height: auto;
+}
+
+.contenedor_hijo p {
+  font-size: 2rem;
+}

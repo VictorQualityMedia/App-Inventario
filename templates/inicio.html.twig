@@ -4,12 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="{{ asset('css/inicio.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <p>{{ mensaje }}</p>
+    <!-- Incluir la cabecera -->
+    {% include 'cabecera.html.twig' %}
+    <div class="contenedor_padre">
+        <div class="contenedor_hijo">
+            <a href="{{path('ctrl_login')}}">
+                <img src="{{ asset('images/non-background-img/home.jpg') }}" alt=""><br>
+                <p>Home</p>
+            </a>  
+        </div>
+        <div class="contenedor_hijo">
+            <a href="{{path('mostrar_inventario')}}">
+                <img src="{{ asset('images/non-background-img/material.jpg') }}" alt=""><br>
+                <p>Material</p>
+            </a>  
+        </div>
+        <div class="contenedor_hijo">
+            <a href="{{path('ctrl_login')}}">
+                <img src="{{ asset('images/non-background-img/mytools.jpg') }}" alt=""><br>
+                <p>Mis herramientas</p>
+            </a>  
+        </div>
+        <div class="contenedor_hijo">
+            <a href="{{path('ctrl_login')}}">
+                <img src="{{ asset('images/non-background-img/administrar.jpg') }}" alt=""><br>
+                <p>Gestionar</p>
+            </a>  
+        </div>
+        <div class="contenedor_hijo">
+            <a href="{{path('ctrl_logout')}}">
+                <img src="{{ asset('images/non-background-img/logout.jpg') }}" alt=""><br>
+                <p>Logout</p>
+            </a>  
+        </div>
     </div>
 </body>
 </html>

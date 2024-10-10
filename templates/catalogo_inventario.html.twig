@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ asset('css/catalogo-inventario.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% include 'cabecera.html.twig' %}
+
+    <table>
+        <thead>
+            <tr>
+            <th scope="col">SN</th>
+            <th scope="col">Nombre Producto</th>
+            <th scope="col">Información adicional</th>
+            <th scope="col">Cantidad</th>
+            <th scope="col">Stock</th>
+            <th scope="col">Presetado</th>
+            <th scope="col">Malgastado</th>
+            <th scope="col">Cantidad pedir</th>
+            <th scope="col">Pedir prestado</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for producto in productos %}
+            <tr>
+                <td>{{ producto.sn }}</td>
+                <td>{{ producto.nombre }}</td>
+                <td><form action="{{path('procesar_dar_info')}}">
+                    <button type="submit" class="boton_tabla">Solicitar</button>
+                </form></td>
+                <td>{{ producto.cantidad }}</td>
+                <td>{{ producto.stock }}</td>
+                <td>{{ producto.prestado }}</td>
+                <td>{{ producto.malgastado }}</td>
+                <td><input type="number" class="numeric_selector"></td>
+                <td><form action="{{path('procesar_dar_info')}}">
+                    <button type="submit" class="boton_tabla">Pedir</button>
+                </form></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

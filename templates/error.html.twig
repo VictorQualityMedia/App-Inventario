@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ asset('css/error.css') }}">
+</head>
+<body>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="main">
+        <h1>{{ titulo }}</h1>
+        <p>{{ mensaje }}</p>
+        <form action="{{ path('ctrl_login')}}">
+            <button type="submit">Inicio</button>
+        </form>
+    </div>
+</body>
+</html>

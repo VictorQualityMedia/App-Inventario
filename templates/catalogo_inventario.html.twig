@@ -3,46 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Catalogo Inventario</title>
     <link rel="stylesheet" href="{{ asset('css/catalogo-inventario.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
     {% include 'cabecera.html.twig' %}
 
-    <table>
-        <thead>
-            <tr>
-            <th scope="col">SN</th>
-            <th scope="col">Nombre Producto</th>
-            <th scope="col">Información adicional</th>
-            <th scope="col">Cantidad</th>
-            <th scope="col">Stock</th>
-            <th scope="col">Presetado</th>
-            <th scope="col">Malgastado</th>
-            <th scope="col">Cantidad pedir</th>
-            <th scope="col">Pedir prestado</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for producto in productos %}
-            <tr>
-                <td>{{ producto.sn }}</td>
-                <td>{{ producto.nombre }}</td>
-                <td><form action="{{path('procesar_dar_info')}}">
-                    <button type="submit" class="boton_tabla">Solicitar</button>
-                </form></td>
-                <td>{{ producto.cantidad }}</td>
-                <td>{{ producto.stock }}</td>
-                <td>{{ producto.prestado }}</td>
-                <td>{{ producto.malgastado }}</td>
-                <td><input type="number" class="numeric_selector"></td>
-                <td><form action="{{path('procesar_dar_info')}}">
-                    <button type="submit" class="boton_tabla">Pedir</button>
-                </form></td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <form id="prestamo-form">
+        <button type="submit" class="boton_tabla">Enviar Préstamos</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>Seleccionar</th>
+                    <th>SN</th>
+                    <th>Nombre Producto</th>
+                    <th>Stock</th>
+                    <th>Cantidad a Pedir</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in productos %}
+                <tr>
+                    <td>
+                        <input type="checkbox" class="checkbox-producto" data-sn="{{ producto.sn }}">
+                    </td>
+                    <td>{{ producto.sn }}</td>
+                    <td>{{ producto.nombre }}</td>
+                    <td>{{ producto.stock }}</td>
+                    <td>
+                        <input type="number" min="1" max="{{ producto.stock }}" class="cantidad-input" data-sn="{{ producto.sn }}">
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {# Script para diferentes funciones #}
+    <script>
+        /* Esta función comprueba que, en caso de que el usuario introduzca el valor de forma manual en el campo numérico del catálogo, este no sea
+        inferior a 1 o mayor al stock del producto. */
+        function validarCantidad() {
+            const cantidad = document.getElementById('cantidad_usuario').value;
+            const stockMaximo = document.getElementById('stock_maximo').value;
+
+            // Control para una cantidad anómala
+            if (cantidad < 1 || cantidad > stockMaximo) {
+                alert("Por favor, introduce una cantidad válida entre 1 y " + stockMaximo);
+                return false; // Evita que el formulario se envíe si no es válido
+            }
+
+            return true; // El formulario puede enviarse si la validación pasa
+        }
+
+        // Función para verificar que el campo numérico no sea nulo en caso de que el checkbox esté marcado en la fila correspondiente.
+        document.addEventListener('DOMContentLoaded', function () {
+            // Obtenemos todos los checkbox y campos de cantidad
+            const checkboxes = document.querySelectorAll('.checkbox-producto');
+            const cantidadInputs = document.querySelectorAll('.cantidad-input');
+
+            // Recorremos todos los checkboxes para añadir el evento de cambio
+            checkboxes.forEach((checkbox, index) => {
+                checkbox.addEventListener('change', function () {
+                    // Si el checkbox está marcado, habilitamos el campo de cantidad correspondiente
+                    if (this.checked) {
+                        cantidadInputs[index].disabled = false;
+                        cantidadInputs[index].required = true;
+                    } else {
+                        // Si no está marcado, deshabilitamos y quitamos el 'required'
+                        cantidadInputs[index].disabled = true;
+                        cantidadInputs[index].required = false;
+                    }
+                });
+            });
+        });
+
+        // Función AJAX para las solicitudes de préstamo
+        $(document).ready(function() {
+            $('#prestamo-form').on('submit', function(event) {
+                event.preventDefault(); // Evitar el envío normal del formulario
+
+                let productos = [];
+
+                // Recorremos todos los checkboxes seleccionados
+                $('input.checkbox-producto:checked').each(function() {
+                    let sn = $(this).data('sn');
+                    let cantidad = $('input.cantidad-input[data-sn="' + sn + '"]').val();
+
+                    if (cantidad > 0) {
+                        productos.push({
+                            sn: sn,
+                            cantidad: cantidad
+                        });
+                    }
+                });
+
+                if (productos.length === 0) {
+                    alert("No has seleccionado ningún producto.");
+                    return;
+                }
+
+                // Hacer la solicitud AJAX
+                $.ajax({
+                    url: '{{ path("procesar_solicitud_ajax") }}',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ productos: productos }),
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            alert("Préstamos realizados con éxito.");
+                        }
+                    },
+                    error: function(xhr) {
+                        if (xhr.responseJSON && xhr.responseJSON.errors) {
+                            let errors = xhr.responseJSON.errors.join('<br>');
+                            alert("Error: " + errors);
+                        } else {
+                            alert("Ha ocurrido un error inesperado.");
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

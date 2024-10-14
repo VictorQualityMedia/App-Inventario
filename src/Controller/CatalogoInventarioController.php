@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use DateTimeZone;
 use App\Entity\Usuario;
 use App\Entity\Producto;
+use App\Entity\Prestamo;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,17 +33,69 @@ class CatalogoInventarioController extends AbstractController
         ]);
     }
 
+    // Simplemente procesa la solicitud del usuario y pasa los datos del producto seleccionado
     #[Route("/procesar_dar_info", name: "procesar_dar_info")]
     public function procesar_dar_info(Request $request, EntityManagerInterface $em)
     {
+        $producto_sn = $request->request->get('sn');
+        $producto = $em->getRepository(Producto::class)->find($producto_sn);
         // Proseguimos con pasar los datos al controlador y mandárselos a la plantilla
-        return $this->render('catalogo_inventario.html.twig');
+        return $this->render('info_extendida.html.twig', [
+            'producto' => $producto
+        ]);
     }
 
-    #[Route("/procesar_solicitud", name: "procesar_solicitud")]
-    public function procesar_solicitud(Request $request, EntityManagerInterface $em)
+    // Esta ruta crea una solicitud de préstamo por parte del usuario, la orden tendrá el campo de email_prestamista como nulo y el estado
+    // "EN ESPERA". Para que dicha orden cambie, el administrador tendrá que validar la solicitud de forma manual.
+    #[Route("/procesar_solicitud_ajax", name: "procesar_solicitud_ajax", methods: ["POST"])]
+    public function procesarSolicitudAjax(Request $request, EntityManagerInterface $em)
     {
-        // Proseguimos con pasar los datos al controlador y mandárselos a la plantilla
-        return $this->render('catalogo_inventario.html.twig');
+        $data = json_decode($request->getContent(), true); // Obtener el contenido en formato JSON
+        $usuario = $this->getUser(); // Usuario logueado
+        $productosSeleccionados = $data['productos'];
+
+        $errores = [];
+        
+        foreach ($productosSeleccionados as $productoData) {
+            $snProducto = $productoData['sn'];
+            $cantidad = $productoData['cantidad'];
+
+            $producto = $em->getRepository(Producto::class)->find($snProducto);
+
+            if (!$producto) {
+                $errores[] = "Producto con SN $snProducto no encontrado.";
+                continue;
+            }
+
+            if ($cantidad > $producto->getStock()) {
+                $errores[] = "No hay suficiente stock para el producto con SN $snProducto.";
+                continue;
+            }
+
+            // Crear el préstamo
+            $prestamo = new Prestamo();
+            $prestamo->setCodProducto($producto);
+            $prestamo->setCantidad($cantidad);
+            $prestamo->setFechaPrestamo(new \DateTime());
+            $prestamo->setFechaDevolucion((new \DateTime())->modify('+1 month'));
+            $prestamo->setUsuarioPrestamo($usuario);
+            $prestamo->setEstado("EN ESPERA");
+
+            // Actualizar el stock del producto
+            $producto->setStock($producto->getStock() - $cantidad);
+            $producto->setPrestado($producto->getPrestado() + $cantidad);
+
+            // Persistir el préstamo y actualizar el producto
+            $em->persist($prestamo);
+        }
+
+        $em->flush();
+
+        if (!empty($errores)) {
+            return new JsonResponse(['status' => 'error', 'errors' => $errores], 400);
+        }
+
+        return new JsonResponse(['status' => 'success'], 200);
     }
+
 }

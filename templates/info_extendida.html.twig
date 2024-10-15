@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ asset('css/info_extendida.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% include 'cabecera.html.twig' %}
+
+    <div class="contenedor_info">
+        <p><strong>SN del producto:</strong> {{producto.sn}}</p>
+        <p><strong>Nombre del producto:</strong> {{producto.nombre}}</p>
+        <p><strong>Fecha de la compra del producto:</strong> {{ producto.fechaCompra | date('d-m-Y') }}</p>
+        <p><strong>Precio del producto:</strong> {{producto.precio}}€</p>
+        <p><strong>Categoría del producto:</strong> {{producto.categoria}}</p>
+        <p><strong>Cantidad producto:</strong> {{producto.cantidad}}</p>
+        <p><strong>Stock del producto:</strong> {{producto.stock}}</p>
+        <p><strong>Productos prestados:</strong> {{producto.prestado}}</p>
+        <p><strong>Productos malgastados:</strong> {{producto.malgastado}}</p>
+    </div>
+</body>
+</html>

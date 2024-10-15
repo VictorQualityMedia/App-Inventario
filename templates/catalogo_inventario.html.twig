@@ -9,38 +9,37 @@
 </head>
 <body>
     {% include 'cabecera.html.twig' %}
-
-    <form id="prestamo-form">
-        <button type="submit" class="boton_tabla">Enviar Préstamos</button>
-        <table>
-            <thead>
-                <tr>
-                    <th>Seleccionar</th>
-                    <th>SN</th>
-                    <th>Nombre Producto</th>
-                    <th>Stock</th>
-                    <th>Cantidad a Pedir</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for producto in productos %}
-                <tr>
-                    <td>
-                        <input type="checkbox" class="checkbox-producto" data-sn="{{ producto.sn }}">
-                    </td>
-                    <td>{{ producto.sn }}</td>
-                    <td>{{ producto.nombre }}</td>
-                    <td>{{ producto.stock }}</td>
-                    <td>
-                        <input type="number" min="1" max="{{ producto.stock }}" class="cantidad-input" data-sn="{{ producto.sn }}">
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </form>
-
-
+    <div class="contenedor_principal">
+        <form id="prestamo-form">
+            <div><button type="submit" class="boton_tabla boton_enviar">Enviar Préstamos</button></div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Seleccionar</th>
+                        <th>SN</th>
+                        <th>Nombre Producto</th>
+                        <th>Stock</th>
+                        <th>Cantidad a Pedir</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos %}
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="checkbox-producto" data-sn="{{ producto.sn }}">
+                        </td>
+                        <td>{{ producto.sn }}</td>
+                        <td>{{ producto.nombre }}</td>
+                        <td>{{ producto.stock }}</td>
+                        <td>
+                            <input type="number" min="1" max="{{ producto.stock }}" class="cantidad-input" data-sn="{{ producto.sn }}">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+    </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     {# Script para diferentes funciones #}
     <script>
@@ -81,9 +80,14 @@
             });
         });
 
-        // Función AJAX para las solicitudes de préstamo
         $(document).ready(function() {
             $('#prestamo-form').on('submit', function(event) {
+                // Verificamos si el botón que activó el evento es el botón "Ver"
+                const activeElement = document.activeElement;
+                if ($(activeElement).data('action') === 'ver') {
+                    return true; // Dejar que el formulario se envíe normalmente
+                }
+
                 event.preventDefault(); // Evitar el envío normal del formulario
 
                 let productos = [];
@@ -115,6 +119,7 @@
                     success: function(response) {
                         if (response.status === 'success') {
                             alert("Préstamos realizados con éxito.");
+                            location.reload();
                         }
                     },
                     error: function(xhr) {

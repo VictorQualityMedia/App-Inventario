@@ -18,7 +18,7 @@ class Prestamo
     private $emailPrestamista;
 
     #[ORM\ManyToOne(targetEntity: Producto::class)]
-    #[ORM\JoinColumn(name: 'cod_producto', referencedColumnName: 'idProducto', nullable: false)]
+    #[ORM\JoinColumn(name: 'cod_producto', referencedColumnName: 'sn', nullable: false)]
     private $codProducto;
 
     #[ORM\Column(type: 'integer', name:'cantidad')]

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar Solicitudes</title>
+    <link rel="stylesheet" href="{{ asset('css/administrar_solicitudes.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% include 'cabecera.html.twig' %}
+    <div>
+        {% if is_granted('ROLE_ADMIN') %}
+            <button type="button" class="boton_tabla" id="aceptar_seleccionados">Aceptar seleccionados</button>
+            <button type="button" class="boton_tabla" id="denegar_seleccionados">Denegar seleccionados</button>
+            <button type="button" class="boton_tabla" id="seleccionar_todos">Seleccionar todo</button>
+        {% endif %}
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        {% if is_granted('ROLE_ADMIN') %}
+                        <th scope="col">Seleccionar</th>
+                        {% endif %}
+                        <th scope="col">Id solicitud</th>
+                        <th scope="col">Nombre del producto</th>
+                        <th scope="col">Cantidad</th>
+                        <th scope="col">Fecha préstamo</th>
+                        <th scope="col">Fecha devolución</th>
+                        <th scope="col">Usuario solicitante</th>
+                        <th scope="col">Estado</th>
+                        {% if is_granted('ROLE_ADMIN') %}
+                        <th scope="col">Modificar</th>
+                        {% else %}
+                        <th scope="col">Prestamista</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prestamo in prestamos %}
+                        <tr>
+                            <td><input type="checkbox" class="checkbox-producto" data-id="{{ prestamo.idPrestamo }}"></td>
+                            <td>{{ prestamo.idPrestamo }}</td>
+                            <td>{{ prestamo.codProducto.nombre }}</td>
+                            <td>{{ prestamo.cantidad }}</td>
+                            <td>{{ prestamo.fechaPrestamo|date('d-m-Y') }}</td>
+                            <td>{{ prestamo.fechaDevolucion|date('d-m-Y') }}</td>
+                            <td>{{ prestamo.usuarioPrestamo.email }}</td>
+                            <td>{{ prestamo.estado }}</td>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <td>
+                                    <form action="{{ path('dirigir_a_editar') }}" method="POST">
+                                        {# Inputs ocultos para extraer valores necesarios #}
+                                        <input type="hidden" name="sn" value="{{ prestamo.codProducto.sn }}" id="sn">
+                                        <input type="hidden" name="id_prestamo" value="{{ prestamo.idPrestamo }}" id="id_prestamo">
+                                        <button type="submit" class="boton_tabla">Modificar</button>
+                                    </form>
+                                </td>
+                            {% else %}
+                                <td>
+                                    {% if prestamo.emailPrestamista is null %}
+                                        -
+                                    {% else %}
+                                        {{prestamo.emailPrestamista}}
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                            
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>    
+    </div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+        $(document).ready(function() {
+        $('#aceptar_seleccionados').click(function() {
+            const selectedIds = [];
+            $('.checkbox-producto:checked').each(function() {
+                selectedIds.push($(this).data('id'));
+            });
+
+            if (selectedIds.length > 0) {
+                $.ajax({
+                    url: '{{ path("procesar_aceptar") }}',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ ids: selectedIds }),
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            alert("Validado.");
+                            location.reload();
+                        }
+                    },
+                    error: function(xhr) {
+                        if (xhr.responseJSON && xhr.responseJSON.errors) {
+                            let errors = xhr.responseJSON.errors.join('<br>');
+                            alert("Error: " + errors);
+                        } 
+                        else {
+                            alert("Ha ocurrido un error inesperado.");
+                        }
+                    }
+                });
+            } else {
+                alert('No has seleccionado ninguna solicitud.');
+            }
+        });
+
+        $('#denegar_seleccionados').click(function() {
+            const selectedIds = [];
+            $('.checkbox-producto:checked').each(function() {
+                selectedIds.push($(this).data('id'));
+            });
+
+            if (selectedIds.length > 0) {
+                $.ajax({
+                    url: '{{ path('procesar_denegar') }}',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ ids: selectedIds }),
+                    success: function(response) {
+                        // Manejo de la respuesta exitosa
+                        console.log('Solicitud procesada:', response);
+                    },
+                    error: function(xhr) {
+                        // Manejo de error
+                        console.error('Error en la solicitud:', xhr);
+                    }
+                });
+            } else {
+                alert('No has seleccionado ninguna solicitud.');
+            }
+        });
+    });
+        </script>
+    </body>   
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ asset('css/editar_prestamo.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% include 'cabecera.html.twig' %}
+    <div class="contenedor_principal">
+        <form action="{{path('editar_prestamo')}}" method="POST">
+        <input type="hidden" value="{{ prestamo.idPrestamo }}" name="id_prestamo">
+        <h1>Editar información del préstamo:</h1>
+            <table>
+                <tr>
+                    <td>
+                        <label for="producto">Producto actual: {{ prestamo.codProducto.nombre }}</label>
+                        {# Este campo lo usaremos más adelante para el controlador porque será necesario #}
+                        <input type="hidden" name="producto_id_antiguo" value = {{ prestamo.codProducto.sn }}>
+                        <select name="producto" id="producto_id">
+                            {% for producto in productos %}
+                                <option value="{{ producto.sn }}">{{producto.sn}} - {{producto.nombre}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <label for="cantidad">Cantidad</label>
+                        <input type="number" min="1" max="{{ prestamo.codProducto.stock }}" id="cantidad_id" class="cantidad-input" name="cantidad" data-sn="{{ prestamo.codProducto.sn }}">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="fecha_devolucion">Fecha devolución:</label>
+                        <input type="date" name="fecha_devolucion" id="fecha_devolucion">
+                    </td>
+                </tr>
+                <tr>
+                    <td><button type="submit" class="boton_tabla">Editar</button></td>
+                </tr> 
+            </table>        
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    /* Función para cambiar el valor del stock máximo en el campo numérico cuándo el valor del selector cambia, por lo que evitamos que el usuario
+    pueda introducir un valor máximo del permitido en caso de haber un cambio de un producto con mayor stock a uno que tenga menos. Cambia el 
+    valor del campo numérico a 1 también. */
+        $(document).ready(function() {
+            // Evento que se ejecuta cuando cambia el select de producto
+            $('#producto_id').change(function() {
+                // Obtener el valor del producto seleccionado (sn)
+                let sn = $(this).val();
+
+                // Hacer una llamada AJAX para obtener el stock del producto seleccionado
+                $.ajax({
+                    url: "{{ path('obtener_stock_producto') }}", // Ruta de tu controlador Symfony
+                    method: 'POST',
+                    data: {
+                        sn: sn // Enviar el 'sn' del producto seleccionado
+                    },
+                    success: function(response) {
+                        // Actualizar el valor máximo del campo cantidad con el stock recibido
+                        $('#cantidad_id').attr('max', response.stock);
+                        $('#cantidad_id').val(1);
+                    },
+                    error: function() {
+                        alert('Error al obtener el stock del producto.');
+                    }
+                });
+            });
+        });
+
+        // Para que el administrador no pueda introducir una fecha de devolución menor a la actual
+        $(document).ready(function() {
+        // Función para validar la fecha de devolución
+        $('form').submit(function(event) {
+            // Obtener la fecha de devolución ingresada
+            let fechaDevolucion = new Date($('#fecha_devolucion').val());
+
+            // Obtener la fecha actual
+            let fechaActual = new Date();
+            fechaActual.setHours(0, 0, 0, 0); // Asegurarse de que la hora sea 00:00 para comparar solo fechas
+
+            // Validar si la fecha de devolución es menor que la fecha actual
+            if (fechaDevolucion < fechaActual) {
+                // Si es menor, evitar el envío del formulario
+                event.preventDefault();
+                // Mostrar un mensaje de alerta al usuario
+                alert('No puedes ingresar una fecha de devolución anterior a la fecha actual.');
+            }
+        });
+    });
+    </script>
+</body>
+</html>

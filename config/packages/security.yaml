@@ -1,0 +1,27 @@
+security:
+    providers:
+        app_inventario:
+            entity:
+                class: App\Entity\Usuario
+                property: email
+    password_hashers:
+        App\Entity\Usuario: 'auto'
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+            algorithm: 'auto'
+            cost: 15
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            lazy: true
+            form_login:
+                login_path: ctrl_login
+                check_path: ctrl_login
+                default_target_path: ctrl_login
+            provider: app_inventario
+            logout:
+                path: ctrl_logout
+                target: ctrl_login
+    access_control:
+        - { path: ^/enviarCorreo, role: IS_AUTHENTICATED_ANONYMOUSLY }

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar Solicitudes</title>
+    <link rel="stylesheet" href="{{ asset('css/administrar_solicitudes.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% include 'cabecera.html.twig' %}
+    <div>
+        {% if is_granted('ROLE_ADMIN') %}
+            <button type="button" class="boton_tabla" id="aceptar_seleccionados">Aceptar seleccionados</button>
+            <button type="button" class="boton_tabla" id="denegar_seleccionados">Denegar seleccionados</button>
+            <button type="button" class="boton_tabla" id="seleccionar_todos">Seleccionar todo</button>
+        {% endif %}
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        {% if is_granted('ROLE_ADMIN') %}
+                        <th scope="col">Seleccionar</th>
+                        {% endif %}
+                        <th scope="col">Id solicitud</th>
+                        <th scope="col">Nombre del producto</th>
+                        <th scope="col">Cantidad</th>
+                        <th scope="col">Fecha préstamo</th>
+                        <th scope="col">Fecha devolución</th>
+                        <th scope="col">Usuario solicitante</th>
+                        <th scope="col">Estado</th>
+                        {% if is_granted('ROLE_ADMIN') %}
+                        <th scope="col">Modificar</th>
+                        {% else %}
+                        <th scope="col">Prestamista</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prestamo in prestamos %}
+                        <tr>
+                            <td><input type="checkbox" class="checkbox-producto" data-id="{{ prestamo.idPrestamo }}"></td>
+                            <td>{{ prestamo.idPrestamo }}</td>
+                            <td>{{ prestamo.codProducto.nombre }}</td>
+                            <td>{{ prestamo.cantidad }}</td>
+                            <td>{{ prestamo.fechaPrestamo|date('d-m-Y') }}</td>
+                            <td>{{ prestamo.fechaDevolucion|date('d-m-Y') }}</td>
+                            <td>{{ prestamo.usuarioPrestamo.email }}</td>
+                            <td>{{ prestamo.estado }}</td>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <td>
+                                    <form action="{{ path('dirigir_a_editar') }}" method="POST">
+                                        {# Inputs ocultos para extraer valores necesarios #}
+                                        <input type="hidden" name="sn" value="{{ prestamo.codProducto.sn }}" id="sn">
+                                        <input type="hidden" name="id_prestamo" value="{{ prestamo.idPrestamo }}" id="id_prestamo">
+                                        <button type="submit" class="boton_tabla">Modificar</button>
+                                    </form>
+                                </td>
+                            {% else %}
+                                <td>
+                                    {% if prestamo.emailPrestamista is null %}
+                                        -
+                                    {% else %}
+                                        {{prestamo.emailPrestamista}}
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                            
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>    
+    </div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $(document).ready(function() {
+            $('#prestamo-form').on('submit', function(event) {
+                event.preventDefault(); // Evitar el envío normal del formulario
+
+                let productos = [];
+
+                // Recorremos todos los checkboxes seleccionados
+                $('input.checkbox-producto:checked').each(function() {
+                    let sn = $(this).data('sn');
+                    let cantidad = $('input.cantidad-input[data-sn="' + sn + '"]').val();
+
+                    if (cantidad > 0) {
+                        productos.push({
+                            sn: sn,
+                            cantidad: cantidad
+                        });
+                    }
+                });
+
+                if (productos.length === 0) {
+                    $('#response-message').html('<p>No se ha seleccionado ningún producto.</p>');
+                    return;
+                }
+
+                // Hacer la solicitud AJAX
+                $.ajax({
+                    url: '{{ path("procesar_solicitud_ajax") }}',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ productos: productos }),
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            $('#response-message').html('<p>Préstamos realizados con éxito.</p>');
+
+                            // Refrescar la página para actualizar la vista del stock
+                            location.reload(); // Esta es la instrucción que refresca la página
+                        }
+                    },
+                    error: function(xhr) {
+                        if (xhr.responseJSON && xhr.responseJSON.errors) {
+                            let errors = xhr.responseJSON.errors.join('<br>');
+                            $('#response-message').html('<p>Error: ' + errors + '</p>');
+                        } else {
+                            $('#response-message').html('<p>Ha ocurrido un error inesperado.</p>');
+                        }
+                    }
+                });
+            });
+        });
+        </script>
+    </body>   
+</body>
+</html>

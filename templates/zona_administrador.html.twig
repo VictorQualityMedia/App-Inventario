@@ -10,41 +10,33 @@
 <body>
     <!-- Incluir la cabecera -->
     {% include 'cabecera.html.twig' %}
+    {% if is_granted('ROLE_ADMIN') %}
     <div class="contenedor_padre">
+        
         <div class="contenedor_hijo">
-            <a href="{{path('ctrl_login')}}">
-                <img src="{{ asset('images/non-background-img/home.jpg') }}" alt=""><br>
-                <p>Home</p>
+            <a href="{{path('registro')}}">
+                <img src="{{ asset('images/non-background-img/user_register.jpg') }}" alt=""><br>
+                <p>Registrar usuario</p>
             </a>  
         </div>
-        <div class="contenedor_hijo">
-            <a href="{{path('mostrar_inventario')}}">
-                <img src="{{ asset('images/non-background-img/material.jpg') }}" alt=""><br>
-                <p>Material</p>
-            </a>  
-        </div>
-        {% if is_granted('ROLE_ADMIN') %}
         <div class="contenedor_hijo">
             <a href="{{path('mostrar_solicitudes')}}">
-                <img src="{{ asset('images/non-background-img/solicitudes.jpg') }}" alt=""><br>
-                <p>Solicitudes</p>
+                <img src="{{ asset('images/non-background-img/solicitudes_2.jpg') }}" alt=""><br>
+                <p>Gestionar solicitudes</p>
             </a>  
         </div>
-        {% endif %}
         <div class="contenedor_hijo">
             <a href="{{path('ctrl_login')}}">
-                <img src="{{ asset('images/non-background-img/mytools.jpg') }}" alt=""><br>
-                <p>Mis herramientas</p>
+                <img src="{{ asset('images/non-background-img/new_reg.jpg') }}" alt=""><br>
+                <p>Modificar productos</p>
             </a>  
         </div>
-        {% if is_granted('ROLE_ADMIN') %}
         <div class="contenedor_hijo">
-            <a href="{{path('home_admin')}}">
-                <img src="{{ asset('images/non-background-img/administrar.jpg') }}" alt=""><br>
-                <p>Administrar</p>
+            <a href="{{path('ctrl_login')}}">
+                <img src="{{ asset('images/non-background-img/box_tool2.jpg') }}" alt=""><br>
+                <p>Crear productos</p>
             </a>  
         </div>
-        {% endif %}
         <div class="contenedor_hijo">
             <a href="{{path('ctrl_logout')}}">
                 <img src="{{ asset('images/non-background-img/logout.jpg') }}" alt=""><br>
@@ -52,5 +44,6 @@
             </a>  
         </div>
     </div>
+    {% endif %}
 </body>
 </html>

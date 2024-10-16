@@ -30,8 +30,10 @@ class SolicitudesController extends AbstractController
         // Proseguimos con pasar los datos al controlador y mandárselos a la plantilla
         return $this->render('administrar_solicitudes.html.twig', [
             "prestamos" => $prestamos,
+            "admin_soli" => 1,
             "calidad_admin" => 1,
-            "devolver" => 0
+            "devolver" => 0,
+            "admin_devolver" => 0
         ]);
     }
 
@@ -48,10 +50,10 @@ class SolicitudesController extends AbstractController
         // Proseguimos con pasar los datos al controlador y mandárselos a la plantilla
         return $this->render('administrar_solicitudes.html.twig', [
             "prestamos" => $prestamos,
-            // Esta variable determina si se desea entrar en calidad de admin o de usuario, aunque el usuario tenga permisos de administrador,
-            // es posible que quiera tener la vista de usuario cuando entre a "mis peticiones".
+            "admin_soli" => 0,
             "calidad_admin" => 0,
-            "devolver" => 0
+            "devolver" => 0,
+            "admin_devolver" => 0
         ]);
     }
 
@@ -60,18 +62,40 @@ class SolicitudesController extends AbstractController
     public function mi_material(Request $request, EntityManagerInterface $em)
     {
         $user = $this->getUser();
-        $prestamos = $em->getRepository(Prestamo::class)->findBy(['usuarioPrestamo' => $user, 'estado' => "ACEPTADO"]);
 
         // Forzar la inicialización de la entidad Usuario
-        $em->initializeObject($user);
+        // $em->initializeObject($user);
+
+        $prestamos = $em->getRepository(Prestamo::class)->findBy(['usuarioPrestamo' => $user, 'estado' => "ACEPTADO"]);
 
         // Proseguimos con pasar los datos al controlador y mandárselos a la plantilla
         return $this->render('administrar_solicitudes.html.twig', [
             "prestamos" => $prestamos,
-            // Esta variable determina si se desea entrar en calidad de admin o de usuario, aunque el usuario tenga permisos de administrador,
-            // es posible que quiera tener la vista de usuario cuando entre a "mis peticiones".
+            "admin_soli" => 0,
             "calidad_admin" => 0,
-            "devolver" => 1
+            "devolver" => 1,
+            "admin_devolver" => 0
+        ]);
+    }
+
+    // Para que el usuario pueda ver sus solicitudes y ver si está aprobadas o no.
+    #[Route("/administrar_devoluciones", name: "administrar_devoluciones")]
+    public function administrar_devoluciones(Request $request, EntityManagerInterface $em)
+    {
+        $user = $this->getUser();
+
+        // Forzar la inicialización de la entidad Usuario
+        // $em->initializeObject($user);
+
+        $prestamos = $em->getRepository(Prestamo::class)->findBy(['usuarioPrestamo' => $user, 'estado' => "ESPERA DEVOLUCION"]);
+
+        // Proseguimos con pasar los datos al controlador y mandárselos a la plantilla
+        return $this->render('administrar_solicitudes.html.twig', [
+            "prestamos" => $prestamos,
+            "admin_soli" => 0,
+            "calidad_admin" => 1,
+            "devolver" => 0,
+            "admin_devolver" => 1
         ]);
     }
 
@@ -122,6 +146,66 @@ class SolicitudesController extends AbstractController
             $prestamo = $em->getRepository(Prestamo::class)->find($id);
             if ($prestamo) {
                 $prestamo->setEstado('Denegado');
+                $prestamo->setEmailPrestamista($usuario);
+
+                // Revertir los cambios en el stock y la cantidad prestada
+                $producto = $prestamo->getCodProducto();
+                if ($producto) {
+                    $producto->setStock($producto->getStock() + $prestamo->getCantidad());
+                    $producto->setPrestado($producto->getPrestado() - $prestamo->getCantidad());
+                }
+            }
+        }
+
+        $em->flush();
+
+        return new JsonResponse(['success' => true]);
+    }
+
+    // Función que permite al usuario devolver el producto o productos, no obstante, el administrador tendrá que confirmar dicha devolución para
+    // que sea efectuada
+    #[Route("/procesar_devolucion", name: "procesar_devolucion", methods: ["POST"])]
+    public function procesar_devolucion(Request $request, EntityManagerInterface $em): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if (!isset($data['ids']) || !is_array($data['ids'])) {
+            return new JsonResponse(['success' => false, 'message' => 'Datos inválidos'], 400);
+        }
+
+        $usuario = $this->getUser(); // Usuario logueado
+        $ids = $data['ids'];
+
+        foreach ($ids as $id) {
+            $prestamo = $em->getRepository(Prestamo::class)->find($id);
+            if ($prestamo) {
+                $prestamo->setEstado('Espera devolucion');
+                $prestamo->setEmailPrestamista($usuario);
+            }
+        }
+
+        $em->flush();
+
+        return new JsonResponse(['success' => true]);
+    }
+
+    // Así mismo, esta función permite al administrador confirmar la devolución del usuario.
+    #[Route("/procesar_confirmar_devolucion", name: "procesar_confirmar_devolucion", methods: ["POST"])]
+    public function procesar_confirmar_devolucion(Request $request, EntityManagerInterface $em): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if (!isset($data['ids']) || !is_array($data['ids'])) {
+            return new JsonResponse(['success' => false, 'message' => 'Datos inválidos'], 400);
+        }
+
+        $usuario = $this->getUser(); // Usuario logueado
+        $ids = $data['ids'];
+
+        foreach ($ids as $id) {
+            $prestamo = $em->getRepository(Prestamo::class)->find($id);
+            if ($prestamo) {
+                $prestamo->setEstado('DEVUELTO');
                 $prestamo->setEmailPrestamista($usuario);
 
                 // Revertir los cambios en el stock y la cantidad prestada

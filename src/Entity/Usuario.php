@@ -80,4 +80,9 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void {
         
     }
+
+    // Register Magic Method
+    public function __toString() {
+        return $this->email;
+    }
 }

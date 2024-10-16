@@ -10,14 +10,14 @@
 <body>
     {% include 'cabecera.html.twig' %}
     <div>
-        {% if is_granted('ROLE_ADMIN') and admin_soli == 1 %}
+        {% if is_granted('ROLE_ADMIN') and admin_soli = 1 %}
             <button type="button" class="boton_tabla" id="aceptar_seleccionados">Aceptar seleccionados</button>
             <button type="button" class="boton_tabla" id="denegar_seleccionados">Denegar seleccionados</button> 
         {% endif %}
-        {% if is_granted('ROLE_ADMIN') and admin_devolver == 1 %}
+        {% if is_granted('ROLE_ADMIN') and admin_devolver = 1 %}
             <button type="button" class="boton_tabla" id="aceptar_devoluciones">Aceptar devoluciones</button>
         {% endif %}
-        {% if is_granted('ROLE_ADMIN') and calidad_admin == 1 %}
+        {% if is_granted('ROLE_ADMIN') %}
             <button type="button" class="boton_tabla" id="seleccionar_todos">Seleccionar todo</button>
         {% endif %}
         <div>
@@ -37,7 +37,7 @@
                         <th scope="col">Fecha devolución</th>
                         <th scope="col">Usuario solicitante</th>
                         <th scope="col">Estado</th>
-                        {% if is_granted('ROLE_ADMIN') and calidad_admin == true and admin_soli == 1 %}
+                        {% if is_granted('ROLE_ADMIN') and calidad_admin == true %}
                         <th scope="col">Modificar</th>
                         {% else %}
                         <th scope="col">Prestamista</th>
@@ -62,7 +62,7 @@
                             </td>
                             <td>{{ prestamo.usuarioPrestamo.email }}</td>
                             <td>{{ prestamo.estado }}</td>
-                            {% if is_granted('ROLE_ADMIN') and calidad_admin == true and admin_soli == 1 %}
+                            {% if is_granted('ROLE_ADMIN') and calidad_admin == true %}
                                 <td>
                                     <form action="{{ path('dirigir_a_editar') }}" method="POST">
                                         {# Inputs ocultos para extraer valores necesarios #}
@@ -173,33 +173,6 @@
                 if (selectedIds.length > 0) {
                     $.ajax({
                         url: '{{ path('procesar_devolucion') }}',
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify({ ids: selectedIds }),
-                        success: function(response) {
-                            // Manejo de la respuesta exitosa
-                            console.log('Solicitud procesada:', response);
-                            location.reload(); // Recargar sin verificar la respuesta
-                        },
-                        error: function(xhr) {
-                            // Manejo de error
-                            console.error('Error en la solicitud:', xhr);
-                        }
-                    });
-                } else {
-                    alert('No has seleccionado ninguna solicitud.');
-                }
-            });
-
-            $('#aceptar_devoluciones').click(function() {
-                const selectedIds = [];
-                $('.checkbox-producto:checked').each(function() {
-                    selectedIds.push($(this).data('id'));
-                });
-
-                if (selectedIds.length > 0) {
-                    $.ajax({
-                        url: '{{ path('procesar_confirmar_devolucion') }}',
                         type: 'POST',
                         contentType: 'application/json',
                         data: JSON.stringify({ ids: selectedIds }),

@@ -26,9 +26,12 @@ class SolicitudesController extends AbstractController
     public function mostrar_solicitudes(Request $request, EntityManagerInterface $em)
     {
         $prestamos = $em->getRepository(Prestamo::class)->findBy(['estado' => "EN ESPERA"]);
+        
         // Proseguimos con pasar los datos al controlador y mandárselos a la plantilla
         return $this->render('administrar_solicitudes.html.twig', [
-            "prestamos" => $prestamos
+            "prestamos" => $prestamos,
+            "calidad_admin" => 1,
+            "devolver" => 0
         ]);
     }
 
@@ -38,9 +41,37 @@ class SolicitudesController extends AbstractController
     {
         $user = $this->getUser();
         $prestamos = $em->getRepository(Prestamo::class)->findBy(['usuarioPrestamo' => $user]);
+
+        // Forzar la inicialización de la entidad Usuario
+        $em->initializeObject($user);
+
         // Proseguimos con pasar los datos al controlador y mandárselos a la plantilla
         return $this->render('administrar_solicitudes.html.twig', [
-            "prestamos" => $prestamos
+            "prestamos" => $prestamos,
+            // Esta variable determina si se desea entrar en calidad de admin o de usuario, aunque el usuario tenga permisos de administrador,
+            // es posible que quiera tener la vista de usuario cuando entre a "mis peticiones".
+            "calidad_admin" => 0,
+            "devolver" => 0
+        ]);
+    }
+
+    // Para que el usuario pueda ver sus solicitudes y ver si está aprobadas o no.
+    #[Route("/mi_material", name: "mi_material")]
+    public function mi_material(Request $request, EntityManagerInterface $em)
+    {
+        $user = $this->getUser();
+        $prestamos = $em->getRepository(Prestamo::class)->findBy(['usuarioPrestamo' => $user, 'estado' => "ACEPTADO"]);
+
+        // Forzar la inicialización de la entidad Usuario
+        $em->initializeObject($user);
+
+        // Proseguimos con pasar los datos al controlador y mandárselos a la plantilla
+        return $this->render('administrar_solicitudes.html.twig', [
+            "prestamos" => $prestamos,
+            // Esta variable determina si se desea entrar en calidad de admin o de usuario, aunque el usuario tenga permisos de administrador,
+            // es posible que quiera tener la vista de usuario cuando entre a "mis peticiones".
+            "calidad_admin" => 0,
+            "devolver" => 1
         ]);
     }
 

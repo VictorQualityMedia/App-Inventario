@@ -10,7 +10,7 @@
 <body>
     {% include 'cabecera.html.twig' %}
     <div>
-        {% if is_granted('ROLE_ADMIN') %}
+        {% if is_granted('ROLE_ADMIN') and calidad_admin == true %}
             <button type="button" class="boton_tabla" id="aceptar_seleccionados">Aceptar seleccionados</button>
             <button type="button" class="boton_tabla" id="denegar_seleccionados">Denegar seleccionados</button>
             <button type="button" class="boton_tabla" id="seleccionar_todos">Seleccionar todo</button>
@@ -19,8 +19,8 @@
             <table>
                 <thead>
                     <tr>
-                        {% if is_granted('ROLE_ADMIN') %}
-                        <th scope="col">Seleccionar</th>
+                        {% if is_granted('ROLE_ADMIN') and calidad_admin == true %}
+                        <th scope="col">Seleccionar {{calidad_admin}}</th>
                         {% endif %}
                         <th scope="col">Id solicitud</th>
                         <th scope="col">Nombre del producto</th>
@@ -29,17 +29,22 @@
                         <th scope="col">Fecha devolución</th>
                         <th scope="col">Usuario solicitante</th>
                         <th scope="col">Estado</th>
-                        {% if is_granted('ROLE_ADMIN') %}
+                        {% if is_granted('ROLE_ADMIN') and calidad_admin == true %}
                         <th scope="col">Modificar</th>
                         {% else %}
                         <th scope="col">Prestamista</th>
+                        {% endif %}
+                        {% if devolver == true %}
+                        <th scope="col">Devolver</th>
                         {% endif %}
                     </tr>
                 </thead>
                 <tbody>
                     {% for prestamo in prestamos %}
                         <tr>
+                            {% if is_granted('ROLE_ADMIN') and calidad_admin == true %}
                             <td><input type="checkbox" class="checkbox-producto" data-id="{{ prestamo.idPrestamo }}"></td>
+                            {% endif %}
                             <td>{{ prestamo.idPrestamo }}</td>
                             <td>{{ prestamo.codProducto.nombre }}</td>
                             <td>{{ prestamo.cantidad }}</td>
@@ -47,7 +52,7 @@
                             <td>{{ prestamo.fechaDevolucion|date('d-m-Y') }}</td>
                             <td>{{ prestamo.usuarioPrestamo.email }}</td>
                             <td>{{ prestamo.estado }}</td>
-                            {% if is_granted('ROLE_ADMIN') %}
+                            {% if is_granted('ROLE_ADMIN') and calidad_admin == true %}
                                 <td>
                                     <form action="{{ path('dirigir_a_editar') }}" method="POST">
                                         {# Inputs ocultos para extraer valores necesarios #}
@@ -65,7 +70,9 @@
                                     {% endif %}
                                 </td>
                             {% endif %}
-                            
+                            {% if devolver == true %}
+                                <td><button type="button" class="boton_tabla" id="devolver_material">Devolver</button></td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -90,8 +97,8 @@
                     success: function(response) {
                         if (response.status === 'success') {
                             alert("Validado.");
-                            location.reload();
                         }
+                        location.reload(); // Recargar sin verificar la respuesta
                     },
                     error: function(xhr) {
                         if (xhr.responseJSON && xhr.responseJSON.errors) {
@@ -102,6 +109,7 @@
                             alert("Ha ocurrido un error inesperado.");
                         }
                     }
+                    
                 });
             } else {
                 alert('No has seleccionado ninguna solicitud.');
@@ -123,11 +131,13 @@
                     success: function(response) {
                         // Manejo de la respuesta exitosa
                         console.log('Solicitud procesada:', response);
+                        location.reload(); // Recargar sin verificar la respuesta
                     },
                     error: function(xhr) {
                         // Manejo de error
                         console.error('Error en la solicitud:', xhr);
                     }
+                    
                 });
             } else {
                 alert('No has seleccionado ninguna solicitud.');

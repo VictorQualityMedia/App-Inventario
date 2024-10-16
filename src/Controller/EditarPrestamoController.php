@@ -52,7 +52,7 @@ class EditarPrestamoController extends AbstractController
         $fecha_prestamo = null;
 
         // Formatear la fecha desde el formato YYYY-MM-DD en caso de que el administrador quiera modificar la fecha.
-        if ($fecha_prestamo_input != null) {
+        if ($fecha_prestamo_input != "") {
             $fecha_prestamo = DateTime::createFromFormat('Y-m-d', $fecha_prestamo_input);
         
             // Verificar si la fecha es válida
@@ -60,7 +60,7 @@ class EditarPrestamoController extends AbstractController
                 // Si la fecha es inválida, puedes lanzar una excepción o manejar el error de alguna otra manera
                 return $this->render('error.html.twig', [
                     "titulo" => "¡Vaya!",
-                    "mensaje" => "La fecha proporcionada no es válida. Verifica el formato e intenta de nuevo."
+                    "mensaje" => "La fecha proporcionada no es válida. Verifica el formato e intenta de nuevo: " . $fecha_prestamo_input . " | " . $fecha_prestamo
                 ]);
             }
         }
@@ -91,13 +91,18 @@ class EditarPrestamoController extends AbstractController
             $em->persist($prestamo);
             $em->flush();
 
-        }
+            // Redirigir de vuelta a la página de solicitudes después de la edición
+            return $this->redirectToRoute('mostrar_solicitudes'); // Suponiendo que 'mostrar_solicitudes' es la ruta
 
-        // Si no se encuentra el producto, retornar un error
-        return $this->render('error.html.twig', [
-            "titulo" => "¡Vaya!",
-            "mensaje" => "No hemos podido editar este préstamo porque no existe, contacta con algún técnico o el responsable de la base de datos."
-        ]);
+        }
+        else {
+            // Si no se encuentra el producto, retornar un error
+            return $this->render('error.html.twig', [
+                "titulo" => "¡Vaya!",
+                "mensaje" => "No hemos podido editar este préstamo porque no existe, contacta con algún técnico o el responsable de la base de datos."
+            ]);
+        }
+        
     }
 
 }

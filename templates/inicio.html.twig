@@ -23,16 +23,14 @@
                 <p>Material</p>
             </a>  
         </div>
-        {% if is_granted('ROLE_ADMIN') %}
         <div class="contenedor_hijo">
-            <a href="{{path('mostrar_solicitudes')}}">
+            <a href="{{path('mostrar_solicitudes_user')}}">
                 <img src="{{ asset('images/non-background-img/solicitudes.jpg') }}" alt=""><br>
-                <p>Solicitudes</p>
+                <p>Mis peticiones</p>
             </a>  
         </div>
-        {% endif %}
         <div class="contenedor_hijo">
-            <a href="{{path('ctrl_login')}}">
+            <a href="{{path('mi_material')}}">
                 <img src="{{ asset('images/non-background-img/mytools.jpg') }}" alt=""><br>
                 <p>Mis herramientas</p>
             </a>  

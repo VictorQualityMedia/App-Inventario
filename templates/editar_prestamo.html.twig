@@ -73,6 +73,7 @@
         });
 
         // Para que el administrador no pueda introducir una fecha de devolución menor a la actual
+        // Después de aquello, se interpreta que está bien y muestra una notificación de que todo ha salido bien
         $(document).ready(function() {
         // Función para validar la fecha de devolución
         $('form').submit(function(event) {
@@ -89,6 +90,9 @@
                 event.preventDefault();
                 // Mostrar un mensaje de alerta al usuario
                 alert('No puedes ingresar una fecha de devolución anterior a la fecha actual.');
+            }
+            else {
+                alert("El registro ha cambiado con éxito.");
             }
         });
     });

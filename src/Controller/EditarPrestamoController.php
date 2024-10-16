@@ -49,18 +49,22 @@ class EditarPrestamoController extends AbstractController
         $id_producto_antiguo = $request->request->get('producto_id_antiguo');
         $cantidad = $request->request->get('cantidad');
         $fecha_prestamo_input = $request->request->get('fecha_devolucion');
+        $fecha_prestamo = null;
 
-        // Formatear la fecha desde el formato YYYY-MM-DD
-        $fecha_prestamo = DateTime::createFromFormat('Y-m-d', $fecha_prestamo_input);
+        // Formatear la fecha desde el formato YYYY-MM-DD en caso de que el administrador quiera modificar la fecha.
+        if ($fecha_prestamo_input != null) {
+            $fecha_prestamo = DateTime::createFromFormat('Y-m-d', $fecha_prestamo_input);
         
-        // Verificar si la fecha es válida
-        if (!$fecha_prestamo) {
-            // Si la fecha es inválida, puedes lanzar una excepción o manejar el error de alguna otra manera
-            return $this->render('error.html.twig', [
-                "titulo" => "¡Vaya!",
-                "mensaje" => "La fecha proporcionada no es válida. Verifica el formato e intenta de nuevo."
-            ]);
+            // Verificar si la fecha es válida
+            if (!$fecha_prestamo) {
+                // Si la fecha es inválida, puedes lanzar una excepción o manejar el error de alguna otra manera
+                return $this->render('error.html.twig', [
+                    "titulo" => "¡Vaya!",
+                    "mensaje" => "La fecha proporcionada no es válida. Verifica el formato e intenta de nuevo."
+                ]);
+            }
         }
+        
 
         // Buscar el préstamo y el producto basado en el id
         $prestamo = $em->getRepository(Prestamo::class)->find($id_prestamo);
@@ -80,15 +84,13 @@ class EditarPrestamoController extends AbstractController
             // Modificamos los campos
             $prestamo->setCodProducto($producto);
             $prestamo->setCantidad($cantidad);
-            $prestamo->setFechaDevolucion($fecha_prestamo);  // Asignar la fecha solo si es válida
-
+            if ($fecha_prestamo != null) {
+                $prestamo->setFechaDevolucion($fecha_prestamo);  // Asignar la fecha solo si es válida
+            }
+            
             $em->persist($prestamo);
             $em->flush();
 
-            return $this->render('error.html.twig', [
-                "titulo" => "¡Genial!",
-                "mensaje" => "¡El préstamo ha sido modificado con éxito!"
-            ]);
         }
 
         // Si no se encuentra el producto, retornar un error

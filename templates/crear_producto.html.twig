@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ asset('css/editar_producto.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% include 'cabecera.html.twig' %}
+    <div class="contenedor_principal">
+        <form action="{{path('crear_producto')}}" method="POST">
+        <h1>Crear un nuevo producto:</h1>
+            <table>
+                <tr>
+                    <td colspan = "1">
+                        <label for="producto">SN:</label>
+                        <input type="text" name="sn_producto" required>
+                    </td>
+                    <td colspan = "2">
+                        <label for="producto">Nombre:</label>
+                        <input type="text" name="nombre" required>
+                    </td>
+                    <td colspan = "1">
+                        <label for="precio">Precio:</label>
+                        <input type="number" name="precio" min="1" id="precio" class="cantidad-input" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan = "2">
+                        <label for="fecha_compra">Fecha de compra:</label>
+                        <input type="date" name="fecha_compra" id="fecha_compra" required>
+                    </td>
+                    <td colspan = "2">
+                        <label for="categoria">Categoria:</label>
+                        <input type="text" name="categoria" id="categoria" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="cantdad">Cantidad:</label><br>
+                        <input type="number" min="1" id="cantdad" class="cantidad-input" name="cantidad" required>
+                    </td>
+                    <td>
+                        <label for="stock">Stock:</label>
+                        <input type="number" min="1" id="stock" class="cantidad-input" name="stock" required>
+                    </td>
+                    <td>
+                        <label for="prestado">Prestado:</label>
+                        <input type="number" min="1" id="prestado" class="cantidad-input" name="prestado" required>
+                    </td>
+                    <td>
+                        <label for="malgastado">Malgastado:</label>
+                        <input type="number" min="1" id="malgastado" class="cantidad-input" name="malgastado" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td><button type="submit" class="boton_tabla">Crear producto</button></td>
+                </tr> 
+            </table>        
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function() {
+    $('form').submit(function(event) {
+        alert("El registro ha cambiado con éxito.");
+    });
+});
+    </script>
+</body>
+</html>

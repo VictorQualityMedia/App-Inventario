@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ asset('css/editar_producto.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% include 'cabecera.html.twig' %}
+    <div class="contenedor_principal">
+        <form action="{{path('editar_producto')}}" method="POST">
+        <input type="hidden" name="sn_producto" value = {{ producto.sn }}>
+        <h1>Editar información del producto:</h1>
+            <table>
+                <tr>
+                    <td colspan = "2">
+                        <label for="producto">Producto actual: {{ producto.nombre }}</label>
+                        <input type="text" name="nombre" placeholder="{{producto.nombre}}">
+                    </td>
+                    <td colspan = "2">
+                        <label for="precio">Precio:</label>
+                        <input type="number" name="precio" min="1" id="precio" class="cantidad-input" placeholder="{{producto.precio}}">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan = "2">
+                        <label for="fecha_compra">Fecha de compra: (actualmente {{ producto.fechaCompra|date('Y-m-d') }})</label>
+                        <input type="date" name="fecha_compra" id="fecha_compra" placeholder="{{ producto.fechaCompra|date('Y-m-d') }}">
+                    </td>
+                    <td colspan = "2">
+                        <label for="categoria">Categoria:</label>
+                        <input type="text" name="categoria" id="categoria" placeholder="{{producto.categoria}}">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="cantdad">Cantidad:</label><br>
+                        <input type="number" min="1" id="cantdad" class="cantidad-input" name="cantdad" placeholder="{{producto.cantidad}}">
+                    </td>
+                    <td>
+                        <label for="stock">Stock:</label>
+                        <input type="number" min="1" id="stock" class="cantidad-input" name="stock" placeholder="{{producto.stock}}">
+                    </td>
+                    <td>
+                        <label for="prestado">Prestado:</label>
+                        <input type="number" min="1" id="prestado" class="cantidad-input" name="prestado" placeholder="{{producto.prestado}}">
+                    </td>
+                    <td>
+                        <label for="malgastado">Malgastado:</label>
+                        <input type="number" min="1" id="malgastado" class="cantidad-input" name="malgastado" placeholder="{{producto.malgastado}}">
+                    </td>
+                </tr>
+                <tr>
+                    <td><button type="submit" class="boton_tabla">Editar</button></td>
+                </tr> 
+            </table>        
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    // Para que el administrador no pueda introducir una fecha de devolución menor a la actual
+    // Después de aquello, se interpreta que está bien y muestra una notificación de que todo ha salido bien
+    $(document).ready(function() {
+        // Función para informar al usuario
+        $('form').submit(function(event) {
+            alert("El registro ha cambiado con éxito.");
+        });
+    });
+    </script>
+</body>
+</html>

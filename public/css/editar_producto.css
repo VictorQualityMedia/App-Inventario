@@ -1,0 +1,74 @@
+body {
+  height: 100vh; /* Altura completa del viewport */
+  margin: 0;
+  display: flex;
+  flex-direction: column; /* Para respetar la cabecera fija */
+  font-family: "Open Sans", sans-serif;
+  line-height: 1.25;
+  background: url('../images/background-image6.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
+
+.contenedor_principal {
+  margin: 0 auto;
+  margin-top: 10rem;
+  padding: 2rem;
+  width: 70%;
+  text-align: center;
+  border-radius: 25px;
+  background: linear-gradient(90deg, rgba(249,249,249,1) 0%, rgba(185,253,255,1) 50%, rgba(134,222,255,1) 100%);
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.5);
+}
+
+.contenedor_principal p {
+  margin: 1rem;
+}
+
+h1 {
+  margin-bottom: 2rem;
+}
+
+input, select {
+  margin-right: 2rem;
+}
+
+table {
+  row-gap: 2rem;
+  column-gap: 2rem;
+}
+td {
+  text-align: left;
+  padding: 0.5rem;
+}
+
+/* Reglas para los botones */
+.boton_tabla {
+  display: inline-flex;
+  padding: 12px;
+  margin-bottom: 1%;
+  background: linear-gradient(180deg, rgba(125,253,255,1) 0%, rgba(149,149,149,1) 100%);
+  border: none;
+  border-radius: 0px;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.5); /* Sombra ajustada */
+  color: white;
+  cursor: pointer;
+  transition: background-position 0.5s ease; /* Transición suave para el fondo */
+  background-size: 100% 200%; /* Duplicar el tamaño del fondo para animarlo verticalmente */
+  background-position: 0% 100%; /* Posición inicial del fondo (parte superior) */
+}
+
+.boton_tabla:first-child {
+  margin-left: 5%;
+}
+
+/* Efecto al pasar el mouse */
+.boton_tabla:hover {
+  background-position: 0% 0%; /* Cambia a la posición final (parte inferior) */
+}
+
+input {
+  height: 2rem;
+  width: 100%;
+}

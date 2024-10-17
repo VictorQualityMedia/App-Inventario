@@ -59,6 +59,7 @@ class CatalogoInventarioController extends AbstractController
         foreach ($productosSeleccionados as $productoData) {
             $snProducto = $productoData['sn'];
             $cantidad = $productoData['cantidad'];
+            $evento = $productoData['evento'];
 
             $producto = $em->getRepository(Producto::class)->find($snProducto);
 
@@ -80,7 +81,10 @@ class CatalogoInventarioController extends AbstractController
             $prestamo->setFechaDevolucion((new \DateTime())->modify('+1 month'));
             $prestamo->setUsuarioPrestamo($usuario);
             $prestamo->setEstado("EN ESPERA");
-
+            if (isset($evento)) {
+                $prestamo->setEvento($evento);
+            }
+            
             // Actualizar el stock del producto
             $producto->setStock($producto->getStock() - $cantidad);
             $producto->setPrestado($producto->getPrestado() + $cantidad);

@@ -38,6 +38,7 @@
                         <th scope="col">Fecha préstamo</th>
                         <th scope="col">Fecha devolución</th>
                         <th scope="col">Usuario solicitante</th>
+                        <th scope="col">Evento</th>
                         <th scope="col">Estado</th>
                         {% if is_granted('ROLE_ADMIN') and calidad_admin == true and admin_soli == 1 %}
                         <th scope="col">Modificar</th>
@@ -63,6 +64,13 @@
                                 {{ prestamo.fechaDevolucion|date('d-m-Y') }}
                             </td>
                             <td>{{ prestamo.usuarioPrestamo.email }}</td>
+                            <td>
+                                {% if prestamo.evento is null %}
+                                    -
+                                {% else %}
+                                    {{prestamo.evento}}
+                                {% endif %}
+                            </td>
                             <td>{{ prestamo.estado }}</td>
                             {% if is_granted('ROLE_ADMIN') and calidad_admin == true and admin_soli == 1 %}
                                 <td>

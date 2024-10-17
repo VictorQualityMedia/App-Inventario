@@ -11,7 +11,12 @@
     {% include 'cabecera.html.twig' %}
     <div class="contenedor_principal">
         <form id="prestamo-form">
-            <div><button type="submit" class="boton_tabla boton_enviar">Enviar Préstamos</button></div>
+            <div>
+                <button type="submit" class="boton_tabla boton_enviar">Enviar Préstamos</button>
+                <label for="evento"><strong>Evento:</strong></label>
+                <input type="text" name="evento" id="evento">
+            </div>
+            
             <table>
                 <thead>
                     <tr>
@@ -43,6 +48,11 @@
                 event.preventDefault(); // Evitar el envío normal del formulario
 
                 let productos = [];
+                let evento = document.getElementById("evento").value;
+
+                if (evento == "") {
+                    evento = null;
+                }
 
                 // Recorremos todos los campos de cantidad que tengan un valor mayor a 0
                 $('input.cantidad-input').each(function() {
@@ -51,7 +61,8 @@
                         let sn = $(this).data('sn');
                         productos.push({
                             sn: sn,
-                            cantidad: cantidad
+                            cantidad: cantidad,
+                            evento: evento
                         });
                     }
                 });

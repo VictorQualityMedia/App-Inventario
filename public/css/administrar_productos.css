@@ -5,8 +5,8 @@ body {
     height: 100vh;
     background: url('../images/background-image6.jpg') no-repeat center center fixed;
     background-size: cover;
-    font-family: "Open Sans", sans-serif;
-    line-height: 1.25;
+    margin: 20px; /* Ajusta el margen superior del cuerpo */
+    padding-top: 20px; /* Espacio para evitar que se pegue al borde */
 }
 
 table {
@@ -14,10 +14,18 @@ table {
     border-collapse: collapse;
     width: 90%;
     table-layout: fixed;
+    margin-top: 400px;
     margin: 0 auto;
-    margin-top: 1%;
   }
   
+  #contenedor_padre {
+    margin-top: 400px;
+  }
+
+  #eliminar_productos, #eliminar_todos {
+    margin-top: 400px;
+  }
+
   table tr {
     background-color: #f8f8f8;
     border: 1px solid #ddd;
@@ -28,6 +36,14 @@ table {
   table td {
     padding: .625em;
     text-align: center;
+    
+  }
+
+  td {
+    white-space: nowrap; /* Evita que el texto haga salto de línea */
+    overflow: hidden;    /* Oculta el desbordamiento de contenido */
+    text-overflow: ellipsis; /* Muestra "..." si el texto es muy largo */
+    max-width: 200px;    /* Ajusta el ancho máximo de la celda según lo necesites */
   }
   
   table th {
@@ -88,7 +104,7 @@ table {
   }
 
   /* Reglas para el selector numérico */
-  .cantidad-input {
+  .numeric_selector {
     max-width: 50px;
     border-radius: 0px;
     height: 30px;
@@ -107,8 +123,9 @@ table {
 
 /* Reglas para los botones */
 .boton_tabla {
+    display: inline-flex;
     padding: 12px;
-    margin-left: 5%;
+    margin-bottom: 1%;
     background: linear-gradient(180deg, rgba(125,253,255,1) 0%, rgba(149,149,149,1) 100%);
     border: none;
     border-radius: 0px;
@@ -122,23 +139,17 @@ table {
     background-position: 0% 100%; /* Posición inicial del fondo (parte superior) */
 }
 
+.boton_tabla:first-child {
+  margin-left: 5%;
+}
+
 /* Efecto al pasar el mouse */
 .boton_tabla:hover {
-    background-position: 0% 0%; /* Cambia a la posición final (parte inferior) */
+  background-position: 0% 0%; /* Cambia a la posición final (parte inferior) */
 }
 
-.boton_enviar {
-  position: relative;
-  margin-top: 100px;
-}
-
-label {
-  margin-left: 1.5rem;
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: #ddd;
-}
-
-#evento {
-  height: 2rem;
+/* general styling */
+body {
+  font-family: "Open Sans", sans-serif;
+  line-height: 1.25;;
 }

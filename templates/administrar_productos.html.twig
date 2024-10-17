@@ -4,17 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrar Solicitudes</title>
-    <link rel="stylesheet" href="{{ asset('css/administrar_solicitudes.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/administrar_productos.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
     {% include 'cabecera.html.twig' %}
-    <div>
+    <div id="contenedor_padre">
+        {% if is_granted('ROLE_ADMIN') %}
+            <button type="button" class="boton_tabla" id="eliminar_productos">Eliminar productos</button> 
+            <button type="button" class="boton_tabla" id="seleccionar_todos">Seleccionar todo</button> 
+        {% endif %}
         <div>
             <table>
                 <thead>
                     <tr>
-                        <th scope="col">Id producto</th>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <th scope="col">Seleccionar</th>
+                        {% endif %}
+                        <th scope="col">SN producto</th>
                         <th scope="col">Nombre del producto</th>
                         <th scope="col">Fecha compra</th>
                         <th scope="col">Precio</th>
@@ -23,47 +30,33 @@
                         <th scope="col">Stock</th>
                         <th scope="col">Prestado</th>
                         <th scope="col">Malgastado</th>
-                        {% if is_granted('ROLE_ADMIN') and calidad_admin == true and admin_soli == 1 %}
+                        {% if is_granted('ROLE_ADMIN') %}
                         <th scope="col">Modificar</th>
-                        {% else %}
-                        <th scope="col">Prestamista</th>
                         {% endif %}
                     </tr>
                 </thead>
                 <tbody>
-                    {% for prestamo in prestamos %}
+                    {% for producto in productos %}
                         <tr>
-                            {% if is_granted('ROLE_ADMIN') and calidad_admin == true or devolver == true %}
-                            <td><input type="checkbox" class="checkbox-producto" data-id="{{ prestamo.idPrestamo }}"></td>
+                            {% if is_granted('ROLE_ADMIN') %}
+                            <td><input type="checkbox" class="checkbox-producto" data-id="{{ producto.sn }}"></td>
                             {% endif %}
-                            {# {% if devolver == true %}
-                                <td><input type="checkbox" class="checkbox-producto" data-id="{{ prestamo.idPrestamo }}"></td>
-                            {% endif %} #}
-                            <td>{{ prestamo.idPrestamo }}</td>
-                            <td>{{ prestamo.codProducto.nombre }}</td>
-                            <td>{{ prestamo.cantidad }}</td>
-                            <td>{{ prestamo.fechaPrestamo|date('d-m-Y') }}</td>
-                            <td class="fecha-devolucion" data-fecha="{{ prestamo.fechaDevolucion|date('Y-m-d') }}">
-                                {{ prestamo.fechaDevolucion|date('d-m-Y') }}
-                            </td>
-                            <td>{{ prestamo.usuarioPrestamo.email }}</td>
-                            <td>{{ prestamo.estado }}</td>
-                            {% if is_granted('ROLE_ADMIN') and calidad_admin == true and admin_soli == 1 %}
+                            <td>{{ producto.sn }}</td>
+                            <td>{{ producto.nombre }}</td>
+                            <td>{{ producto.fechaCompra|date('d-m-Y') }}</td>
+                            <td>{{ producto.precio }}</td>
+                            <td>{{ producto.categoria }}</td>
+                            <td>{{ producto.cantidad }}</td>
+                            <td>{{ producto.stock }}</td>
+                            <td>{{ producto.prestado }}</td>
+                            <td>{{ producto.malgastado }}</td>
+                            {% if is_granted('ROLE_ADMIN') %}
                                 <td>
-                                    <form action="{{ path('dirigir_a_editar') }}" method="POST">
+                                    <form action="{{ path('dirigir_editar_producto') }}" method="POST">
                                         {# Inputs ocultos para extraer valores necesarios #}
-                                        <input type="hidden" name="sn" value="{{ prestamo.codProducto.sn }}" id="sn">
-                                        <input type="hidden" name="id_prestamo" value="{{ prestamo.idPrestamo }}" id="id_prestamo">
+                                        <input type="hidden" name="sn" value="{{ producto.sn }}" id="sn">
                                         <button type="submit" class="boton_tabla">Modificar</button>
                                     </form>
-                                </td>
-                            {% else %}
-                                <td>
-                                    {% if prestamo.emailPrestamista is null %}
-                                        -
-                                    {% else %}
-                                        {{prestamo.emailPrestamista}}
-                                    {% endif %}
                                 </td>
                             {% endif %}
                         </tr>
@@ -75,21 +68,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Cambiar color de texto de la fecha de devolución
-            $('.fecha-devolucion').each(function() {
-                const fechaDevolucion = new Date($(this).data('fecha'));
-                const hoy = new Date();
-                const diferencia = Math.ceil((fechaDevolucion - hoy) / (1000 * 3600 * 24)); // Diferencia en días
-
-                if (diferencia > 7) {
-                    $(this).addClass('text-verde');
-                } else if (diferencia > 0) {
-                    $(this).addClass('text-amarillo');
-                } else {
-                    $(this).addClass('text-rojo');
-                }
-            });
-
             // Función para seleccionar o desmarcar todos los checkboxes
             $('#seleccionar_todos').click(function() {
                 const todosCheckboxes = $('.checkbox-producto');
@@ -99,120 +77,34 @@
                 todosCheckboxes.prop('checked', !todosSeleccionados);
             });
 
-            // Acepta los préstamos seleccionados
-            $('#aceptar_seleccionados').click(function() {
-                const selectedIds = [];
-                $('.checkbox-producto:checked').each(function() {
-                    selectedIds.push($(this).data('id'));
-                });
-
-                if (selectedIds.length > 0) {
-                    $.ajax({
-                        url: '{{ path("procesar_aceptar") }}',
-                        method: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify({ ids: selectedIds }),
-                        success: function(response) {
-                            if (response.status === 'success') {
-                                alert("Validado.");
-                            }
-                            location.reload(); // Recargar sin verificar la respuesta
-                        },
-                        error: function(xhr) {
-                            if (xhr.responseJSON && xhr.responseJSON.errors) {
-                                let errors = xhr.responseJSON.errors.join('<br>');
-                                alert("Error: " + errors);
-                            } 
-                            else {
-                                alert("Ha ocurrido un error inesperado.");
-                            }
-                        }
-                    });
-                } else {
-                    alert('No has seleccionado ninguna solicitud.');
-                }
+            $('#eliminar_productos').click(function() {
+            const productosSeleccionados = [];
+            $('.checkbox-producto:checked').each(function() {
+                productosSeleccionados.push($(this).data('id'));
             });
 
-            $('#denegar_seleccionados').click(function() {
-                const selectedIds = [];
-                $('.checkbox-producto:checked').each(function() {
-                    selectedIds.push($(this).data('id'));
+            if (productosSeleccionados.length > 0) {
+                const datos = { productos: productosSeleccionados };
+                console.log(JSON.stringify(datos)); // Verifica qué se está enviando
+                $.ajax({
+                    url: "{{ path('eliminar_productos') }}",
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json', // Asegúrate de que esto esté presente
+                    data: JSON.stringify(datos),
+                    success: function(response) {
+                        alert("Productos eliminados correctamente.");
+                        location.reload();
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText); // Verificar el error
+                        alert("Error al eliminar los productos.");
+                    }
                 });
-
-                if (selectedIds.length > 0) {
-                    $.ajax({
-                        url: '{{ path('procesar_denegar') }}',
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify({ ids: selectedIds }),
-                        success: function(response) {
-                            // Manejo de la respuesta exitosa
-                            console.log('Solicitud procesada:', response);
-                            location.reload(); // Recargar sin verificar la respuesta
-                        },
-                        error: function(xhr) {
-                            // Manejo de error
-                            console.error('Error en la solicitud:', xhr);
-                        }
-                    });
-                } else {
-                    alert('No has seleccionado ninguna solicitud.');
-                }
-            });
-
-            $('#devolver_material').click(function() {
-                const selectedIds = [];
-                $('.checkbox-producto:checked').each(function() {
-                    selectedIds.push($(this).data('id'));
-                });
-
-                if (selectedIds.length > 0) {
-                    $.ajax({
-                        url: '{{ path('procesar_devolucion') }}',
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify({ ids: selectedIds }),
-                        success: function(response) {
-                            // Manejo de la respuesta exitosa
-                            console.log('Solicitud procesada:', response);
-                            location.reload(); // Recargar sin verificar la respuesta
-                        },
-                        error: function(xhr) {
-                            // Manejo de error
-                            console.error('Error en la solicitud:', xhr);
-                        }
-                    });
-                } else {
-                    alert('No has seleccionado ninguna solicitud.');
-                }
-            });
-
-            $('#aceptar_devoluciones').click(function() {
-                const selectedIds = [];
-                $('.checkbox-producto:checked').each(function() {
-                    selectedIds.push($(this).data('id'));
-                });
-
-                if (selectedIds.length > 0) {
-                    $.ajax({
-                        url: '{{ path('procesar_confirmar_devolucion') }}',
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify({ ids: selectedIds }),
-                        success: function(response) {
-                            // Manejo de la respuesta exitosa
-                            console.log('Solicitud procesada:', response);
-                            location.reload(); // Recargar sin verificar la respuesta
-                        },
-                        error: function(xhr) {
-                            // Manejo de error
-                            console.error('Error en la solicitud:', xhr);
-                        }
-                    });
-                } else {
-                    alert('No has seleccionado ninguna solicitud.');
-                }
-            });
+            } else {
+                alert("Por favor selecciona al menos un producto para eliminar.");
+            }
+        });
         });
     </script>
 </body>

@@ -26,7 +26,7 @@ class CatalogoInventarioController extends AbstractController
     #[Route("/mostrar_inventario", name: "mostrar_inventario")]
     public function mostrar_inventario(Request $request, EntityManagerInterface $em)
     {
-        $productos = $em->getRepository(Producto::class)->findAll();
+        $productos = $em->getRepository(Producto::class)->findBy([], ['nombre' => 'ASC']);
         // Proseguimos con pasar los datos al controlador y mandárselos a la plantilla
         return $this->render('catalogo_inventario.html.twig', [
             "productos" => $productos

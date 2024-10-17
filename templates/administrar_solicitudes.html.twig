@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrar Solicitudes</title>
     <link rel="stylesheet" href="{{ asset('css/administrar_solicitudes.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/buscador.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Agrega Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     {% include 'cabecera.html.twig' %}
@@ -24,8 +27,20 @@
         {% if devolver == 1 or calidad_admin == 1 %}
             <button type="button" class="boton_tabla" id="seleccionar_todos">Seleccionar todo</button>
         {% endif %}
+        <div class="search-box">
+            <button class="btn-search"><i class="fas fa-search"></i></button>
+            <input type="text" class="input-search" placeholder="Filtra por evento...">
+        </div>
         <div>
-            
+            <!-- Aquí coloco un input de type hidden para posteriormente colocarle un valor en función de la variante de la página que se esté 
+            mostrando. Esto es por el buscador, ya que no siempre el puntero (la columna de evento) va a permanecer en el mismo sitio, esto lo 
+            hago gracias a las variables que uso en el controlador de SolicitudesController.php -->
+            {% if admin_soli == 0 and calidad_admin == 0 and devolver == 0 and admin_devolver == 0 %}
+            <input type="hidden" name="posicion_evento" id="posicion_evento" value="td:eq(6)">
+            {% else %}
+            <input type="hidden" name="posicion_evento" id="posicion_evento" value="td:eq(5)">
+            {% endif %}
+
             <table>
                 <thead>
                     <tr>
@@ -40,11 +55,8 @@
                         <th scope="col">Usuario solicitante</th>
                         <th scope="col">Evento</th>
                         <th scope="col">Estado</th>
-                        {% if is_granted('ROLE_ADMIN') and calidad_admin == true and admin_soli == 1 %}
-                        <th scope="col">Modificar</th>
-                        {% else %}
                         <th scope="col">Prestamista</th>
-                        {% endif %}
+                        <th scope="col">Modificar</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -72,24 +84,21 @@
                                 {% endif %}
                             </td>
                             <td>{{ prestamo.estado }}</td>
-                            {% if is_granted('ROLE_ADMIN') and calidad_admin == true and admin_soli == 1 %}
-                                <td>
-                                    <form action="{{ path('dirigir_a_editar') }}" method="POST">
-                                        {# Inputs ocultos para extraer valores necesarios #}
-                                        <input type="hidden" name="sn" value="{{ prestamo.codProducto.sn }}" id="sn">
-                                        <input type="hidden" name="id_prestamo" value="{{ prestamo.idPrestamo }}" id="id_prestamo">
-                                        <button type="submit" class="boton_tabla">Modificar</button>
-                                    </form>
-                                </td>
-                            {% else %}
-                                <td>
-                                    {% if prestamo.emailPrestamista is null %}
-                                        -
-                                    {% else %}
-                                        {{prestamo.emailPrestamista}}
-                                    {% endif %}
-                                </td>
-                            {% endif %}
+                            <td>
+                                {% if prestamo.emailPrestamista is null %}
+                                    -
+                                {% else %}
+                                    {{prestamo.emailPrestamista}}
+                                {% endif %}
+                            </td>
+                            <td>
+                                <form action="{{ path('dirigir_a_editar') }}" method="POST">
+                                    {# Inputs ocultos para extraer valores necesarios #}
+                                    <input type="hidden" name="sn" value="{{ prestamo.codProducto.sn }}" id="sn">
+                                    <input type="hidden" name="id_prestamo" value="{{ prestamo.idPrestamo }}" id="id_prestamo">
+                                    <button type="submit" class="boton_tabla">Modificar</button>
+                                </form>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -99,6 +108,24 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
+            // Evento de tecla al escribir en la caja de búsqueda
+            $('.input-search').on('keyup', function() {
+                let posicion_evento = document.getElementById("posicion_evento").value;
+                let searchQuery = $(this).val().toLowerCase();
+
+                // Iterar sobre las filas de la tabla
+                $('tbody tr').each(function() {
+                    const nombreProducto = $(this).find(posicion_evento).text().toLowerCase(); // Asume que el nombre del producto está en la columna 2 (índice 1)
+                    
+                    // Si el nombre contiene la búsqueda, mostrar la fila. Si no, ocultarla.
+                    if (nombreProducto.includes(searchQuery)) {
+                        $(this).css('display', '');  // Mostrar (restablecer a su valor predeterminado)
+                    } else {
+                        $(this).css('display', 'none');  // Ocultar la fila completamente
+                    }
+                });
+            });
+
             // Cambiar color de texto de la fecha de devolución
             $('.fecha-devolucion').each(function() {
                 const fechaDevolucion = new Date($(this).data('fecha'));

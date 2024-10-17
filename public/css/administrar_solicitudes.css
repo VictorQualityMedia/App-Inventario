@@ -7,8 +7,6 @@ body {
     background-size: cover;
 }
 
-
-
 table {
     border: 1px solid #ccc;
     border-collapse: collapse;
@@ -157,4 +155,9 @@ body {
 
 .text-rojo {
   color: red;
+}
+
+/* Para el buscador */
+.search-box {
+  margin-top: -60px;
 }

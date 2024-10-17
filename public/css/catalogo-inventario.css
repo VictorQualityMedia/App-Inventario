@@ -146,3 +146,7 @@ label {
 #evento {
   height: 2rem;
 }
+
+.search-box {
+  margin-top: 100px;
+}

@@ -17,13 +17,15 @@
         {% if is_granted('ROLE_ADMIN') and admin_devolver == 1 %}
             <button type="button" class="boton_tabla" id="aceptar_devoluciones">Aceptar devoluciones</button>
         {% endif %}
-        {% if is_granted('ROLE_ADMIN') and calidad_admin == 1 %}
+        {% if devolver == true %}
+            <td><button type="button" class="boton_tabla" id="devolver_material">Devolver</button></td>
+        {% endif %}
+        {# {% if is_granted('ROLE_ADMIN') and calidad_admin == 1 %} #}
+        {% if devolver == 1 or calidad_admin == 1 %}
             <button type="button" class="boton_tabla" id="seleccionar_todos">Seleccionar todo</button>
         {% endif %}
         <div>
-            {% if devolver == true %}
-                <td><button type="button" class="boton_tabla" id="devolver_material">Devolver</button></td>
-            {% endif %}
+            
             <table>
                 <thead>
                     <tr>
@@ -104,6 +106,16 @@
                 }
             });
 
+            // Función para seleccionar o desmarcar todos los checkboxes
+            $('#seleccionar_todos').click(function() {
+                const todosCheckboxes = $('.checkbox-producto');
+                const todosSeleccionados = todosCheckboxes.filter(':checked').length === todosCheckboxes.length;
+
+                // Si todos están seleccionados, desmarcar todos. Si no, seleccionarlos todos.
+                todosCheckboxes.prop('checked', !todosSeleccionados);
+            });
+
+            // Acepta los préstamos seleccionados
             $('#aceptar_seleccionados').click(function() {
                 const selectedIds = [];
                 $('.checkbox-producto:checked').each(function() {

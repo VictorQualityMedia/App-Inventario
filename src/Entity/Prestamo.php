@@ -37,6 +37,9 @@ class Prestamo
     #[ORM\Column(type: 'string', name:'estado')]
     private $estado;
 
+    #[ORM\Column(type: 'string', name:'evento')]
+    private $evento;
+
     // Getters y Setters para los demás campos
     public function getIdPrestamo(): ?int
     {
@@ -117,6 +120,17 @@ class Prestamo
     public function setEstado(string $estado): self
     {
         $this->estado = $estado;
+        return $this;
+    }
+
+    public function getEvento(): ?string
+    {
+        return $this->evento;
+    }
+
+    public function setEvento(string $evento): self
+    {
+        $this->evento = $evento;
         return $this;
     }
 }

@@ -10,34 +10,20 @@
 <body>
     {% include 'cabecera.html.twig' %}
     <div>
-        {% if is_granted('ROLE_ADMIN') and admin_soli = 1 %}
-            <button type="button" class="boton_tabla" id="aceptar_seleccionados">Aceptar seleccionados</button>
-            <button type="button" class="boton_tabla" id="denegar_seleccionados">Denegar seleccionados</button> 
-        {% endif %}
-        {% if is_granted('ROLE_ADMIN') and admin_devolver = 1 %}
-            <button type="button" class="boton_tabla" id="aceptar_devoluciones">Aceptar devoluciones</button>
-        {% endif %}
-        {% if is_granted('ROLE_ADMIN') %}
-            <button type="button" class="boton_tabla" id="seleccionar_todos">Seleccionar todo</button>
-        {% endif %}
         <div>
-            {% if devolver == true %}
-                <td><button type="button" class="boton_tabla" id="devolver_material">Devolver</button></td>
-            {% endif %}
             <table>
                 <thead>
                     <tr>
-                        {% if is_granted('ROLE_ADMIN') and calidad_admin == true or devolver == true %}
-                        <th scope="col">Seleccionar</th>
-                        {% endif %}
-                        <th scope="col">Id solicitud</th>
+                        <th scope="col">Id producto</th>
                         <th scope="col">Nombre del producto</th>
+                        <th scope="col">Fecha compra</th>
+                        <th scope="col">Precio</th>
+                        <th scope="col">Categoría</th>
                         <th scope="col">Cantidad</th>
-                        <th scope="col">Fecha préstamo</th>
-                        <th scope="col">Fecha devolución</th>
-                        <th scope="col">Usuario solicitante</th>
-                        <th scope="col">Estado</th>
-                        {% if is_granted('ROLE_ADMIN') and calidad_admin == true %}
+                        <th scope="col">Stock</th>
+                        <th scope="col">Prestado</th>
+                        <th scope="col">Malgastado</th>
+                        {% if is_granted('ROLE_ADMIN') and calidad_admin == true and admin_soli == 1 %}
                         <th scope="col">Modificar</th>
                         {% else %}
                         <th scope="col">Prestamista</th>
@@ -62,7 +48,7 @@
                             </td>
                             <td>{{ prestamo.usuarioPrestamo.email }}</td>
                             <td>{{ prestamo.estado }}</td>
-                            {% if is_granted('ROLE_ADMIN') and calidad_admin == true %}
+                            {% if is_granted('ROLE_ADMIN') and calidad_admin == true and admin_soli == 1 %}
                                 <td>
                                     <form action="{{ path('dirigir_a_editar') }}" method="POST">
                                         {# Inputs ocultos para extraer valores necesarios #}
@@ -104,6 +90,16 @@
                 }
             });
 
+            // Función para seleccionar o desmarcar todos los checkboxes
+            $('#seleccionar_todos').click(function() {
+                const todosCheckboxes = $('.checkbox-producto');
+                const todosSeleccionados = todosCheckboxes.filter(':checked').length === todosCheckboxes.length;
+
+                // Si todos están seleccionados, desmarcar todos. Si no, seleccionarlos todos.
+                todosCheckboxes.prop('checked', !todosSeleccionados);
+            });
+
+            // Acepta los préstamos seleccionados
             $('#aceptar_seleccionados').click(function() {
                 const selectedIds = [];
                 $('.checkbox-producto:checked').each(function() {
@@ -173,6 +169,33 @@
                 if (selectedIds.length > 0) {
                     $.ajax({
                         url: '{{ path('procesar_devolucion') }}',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ ids: selectedIds }),
+                        success: function(response) {
+                            // Manejo de la respuesta exitosa
+                            console.log('Solicitud procesada:', response);
+                            location.reload(); // Recargar sin verificar la respuesta
+                        },
+                        error: function(xhr) {
+                            // Manejo de error
+                            console.error('Error en la solicitud:', xhr);
+                        }
+                    });
+                } else {
+                    alert('No has seleccionado ninguna solicitud.');
+                }
+            });
+
+            $('#aceptar_devoluciones').click(function() {
+                const selectedIds = [];
+                $('.checkbox-producto:checked').each(function() {
+                    selectedIds.push($(this).data('id'));
+                });
+
+                if (selectedIds.length > 0) {
+                    $.ajax({
+                        url: '{{ path('procesar_confirmar_devolucion') }}',
                         type: 'POST',
                         contentType: 'application/json',
                         data: JSON.stringify({ ids: selectedIds }),

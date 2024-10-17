@@ -11,14 +11,14 @@
     {% include 'cabecera.html.twig' %}
     <div>
         {% if is_granted('ROLE_ADMIN') and admin_soli == 1 %}
-            <button type="button" class="boton_tabla" id="aceptar_seleccionados">Aceptar seleccionados</button>
-            <button type="button" class="boton_tabla" id="denegar_seleccionados">Denegar seleccionados</button> 
+            <button type="button" class="boton_tabla botones-top" id="aceptar_seleccionados">Aceptar seleccionados</button>
+            <button type="button" class="boton_tabla botones-top" id="denegar_seleccionados">Denegar seleccionados</button> 
         {% endif %}
         {% if is_granted('ROLE_ADMIN') and admin_devolver == 1 %}
-            <button type="button" class="boton_tabla" id="aceptar_devoluciones">Aceptar devoluciones</button>
+            <button type="button" class="boton_tabla botones-top" id="aceptar_devoluciones">Aceptar devoluciones</button>
         {% endif %}
         {% if devolver == true %}
-            <td><button type="button" class="boton_tabla" id="devolver_material">Devolver</button></td>
+            <td><button type="button" class="boton_tabla botones-top" id="devolver_material">Devolver</button></td>
         {% endif %}
         {# {% if is_granted('ROLE_ADMIN') and calidad_admin == 1 %} #}
         {% if devolver == 1 or calidad_admin == 1 %}

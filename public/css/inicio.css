@@ -56,3 +56,22 @@ a {
 .contenedor_hijo p {
   font-size: 2rem;
 }
+
+@media (max-width: 550px) {
+  .contenedor_hijo {
+    width: 100%;
+  }
+}
+
+@media (min-width: 551px) and (max-width: 780px) {
+  .contenedor_hijo {
+    width: 75%;
+    height: 450px;
+  }
+}
+
+@media (min-width: 780px) and (max-width: 1000px) {
+  .contenedor_hijo {
+    height: 300px;
+  }
+}

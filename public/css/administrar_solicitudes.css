@@ -1,16 +1,25 @@
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: url('../images/background-image6.jpg') no-repeat center center fixed;
-    background-size: cover;
+  display: flex;
+  background: url('../images/background-image6.jpg') no-repeat center center fixed;
+  background-size: cover;
+  font-family: "Open Sans", sans-serif;
+  line-height: 1.25;
+}
+
+#contenedor_principal {
+    position: relative; /* Cambia a 'relative' en lugar de 'absolute' */
+    margin-top: 100px; /* Ajusta este valor según lo que necesites */
+    margin-bottom: 50px; /* Puedes agregar un margen inferior para controlar la distancia al fondo */
+    padding-bottom: 20px; /* Espacio adicional en la parte inferior */
+    width: 90%; /* Para asegurarte de que se mantenga dentro del ancho de la página */
+    margin-left: auto;
+    margin-right: auto; /* Centrará el contenedor horizontalmente */
 }
 
 table {
     border: 1px solid #ccc;
     border-collapse: collapse;
-    width: 90%;
+    width: 100%;
     table-layout: fixed;
     margin: 0 auto;
   }
@@ -39,6 +48,12 @@ table {
     font-size: .85em;
     letter-spacing: .1em;
     text-transform: uppercase;
+  }
+
+  .cantidad-input {
+    max-width: 50px;
+    border-radius: 0px;
+    height: 30px;
   }
   
   @media screen and (max-width: 600px) {
@@ -91,13 +106,6 @@ table {
 
     
   }
-
-  /* Reglas para el selector numérico */
-  .numeric_selector {
-    max-width: 50px;
-    border-radius: 0px;
-    height: 30px;
-  }
   
   input[type="number"]::-webkit-outer-spin-button,
   input[type="number"]::-webkit-inner-spin-button {
@@ -128,10 +136,6 @@ table {
     background-position: 0% 100%; /* Posición inicial del fondo (parte superior) */
 }
 
-.boton_tabla:first-child {
-  margin-left: 5%;
-}
-
 /* Efecto al pasar el mouse */
 .boton_tabla:hover {
   background-position: 0% 0%; /* Cambia a la posición final (parte inferior) */
@@ -155,11 +159,6 @@ body {
 .text-rojo {
   color: red;
 }
-
-/* Para el buscador */
-/* .search-box {
-  margin-top: -60px;
-} */
 
 .selector_estados {
   display: inline-flex;

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrar Solicitudes</title>
+    <link rel="stylesheet" href="{{ asset('css/buscador.css') }}">
     <link rel="stylesheet" href="{{ asset('css/administrar_productos.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <!-- Agrega Font Awesome -->
@@ -12,10 +13,12 @@
 <body>
     {% include 'cabecera.html.twig' %}
     <div id="contenedor_padre">
-        {% if is_granted('ROLE_ADMIN') %}
-            <button type="button" class="boton_tabla" id="eliminar_productos">Eliminar productos</button> 
-            <button type="button" class="boton_tabla" id="seleccionar_todos">Seleccionar todo</button> 
-        {% endif %}
+        <button type="button" class="boton_tabla" id="eliminar_productos">Eliminar productos</button> 
+        <button type="button" class="boton_tabla" id="seleccionar_todos">Seleccionar todo</button> 
+        <div class="search-box">
+            <button class="btn-search"><i class="fas fa-search"></i></button>
+            <input type="text" class="input-search" placeholder="Filtra por nombre...">
+        </div>
         <div>
             <table>
                 <thead>
@@ -80,33 +83,51 @@
             });
 
             $('#eliminar_productos').click(function() {
-            const productosSeleccionados = [];
-            $('.checkbox-producto:checked').each(function() {
-                productosSeleccionados.push($(this).data('id'));
+                const productosSeleccionados = [];
+                $('.checkbox-producto:checked').each(function() {
+                    productosSeleccionados.push($(this).data('id'));
+                });
+
+                if (productosSeleccionados.length > 0) {
+                    const datos = { productos: productosSeleccionados };
+                    console.log(JSON.stringify(datos)); // Verifica qué se está enviando
+                    $.ajax({
+                        url: "{{ path('eliminar_productos') }}",
+                        type: 'POST',
+                        dataType: 'json',
+                        contentType: 'application/json', // Asegúrate de que esto esté presente
+                        data: JSON.stringify(datos),
+                        success: function(response) {
+                            alert("Productos eliminados correctamente.");
+                            location.reload();
+                        },
+                        error: function(xhr) {
+                            console.log(xhr.responseText); // Verificar el error
+                            alert("Error al eliminar los productos.");
+                        }
+                    });
+                } 
+                else {
+                    alert("Por favor selecciona al menos un producto para eliminar.");
+                }
             });
 
-            if (productosSeleccionados.length > 0) {
-                const datos = { productos: productosSeleccionados };
-                console.log(JSON.stringify(datos)); // Verifica qué se está enviando
-                $.ajax({
-                    url: "{{ path('eliminar_productos') }}",
-                    type: 'POST',
-                    dataType: 'json',
-                    contentType: 'application/json', // Asegúrate de que esto esté presente
-                    data: JSON.stringify(datos),
-                    success: function(response) {
-                        alert("Productos eliminados correctamente.");
-                        location.reload();
-                    },
-                    error: function(xhr) {
-                        console.log(xhr.responseText); // Verificar el error
-                        alert("Error al eliminar los productos.");
+            // Evento de tecla al escribir en la caja de búsqueda
+            $('.input-search').on('keyup', function() {
+                let searchQuery = $(this).val().toLowerCase();
+
+                // Iterar sobre las filas de la tabla
+                $('tbody tr').each(function() {
+                    const nombreProducto = $(this).find("td:eq(2)").text().toLowerCase(); // Asume que el nombre del producto está en la columna 2 (índice 1)
+                    
+                    // Si el nombre contiene la búsqueda, mostrar la fila. Si no, ocultarla.
+                    if (nombreProducto.includes(searchQuery)) {
+                        $(this).css('display', '');  // Mostrar (restablecer a su valor predeterminado)
+                    } else {
+                        $(this).css('display', 'none');  // Ocultar la fila completamente
                     }
                 });
-            } else {
-                alert("Por favor selecciona al menos un producto para eliminar.");
-            }
-        });
+            });
         });
     </script>
 </body>

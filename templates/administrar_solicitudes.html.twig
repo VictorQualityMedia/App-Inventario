@@ -14,7 +14,7 @@
 <body>
     {% include 'cabecera.html.twig' %}
     {% if is_granted('ROLE_ADMIN') %}
-    <div>
+    <div id="contenedor_principal">
             <button type="button" class="boton_tabla botones-top" id="aceptar_seleccionados">Aceptar seleccionados</button>
             <button type="button" class="boton_tabla botones-top" id="denegar_seleccionados">Denegar seleccionados</button> 
             <button type="button" class="boton_tabla botones-top" id="aceptar_devoluciones">Confirmar devoluciones</button>
@@ -24,7 +24,7 @@
                     <option selected value="0">TODOS</option>
                     <option value="1">ACEPTADO</option>
                     <option value="2">DENEGADO</option>
-                    <option value="3">EN ESPERa</option>
+                    <option value="3">EN ESPERA</option>
                     <option value="4">ESPERA SOLICITUD</option>
                     <option value="5">DEVUELTO</option>
                 </select>
@@ -250,6 +250,44 @@
                     alert('No has seleccionado ninguna solicitud.');
                 }
             });
+
+            // Evento del selector de estado
+            $('.selector_estados select').on('change', function() {
+                const estadoSeleccionado = $(this).val(); // Obtener el valor seleccionado en el dropdown
+                $('tbody tr').each(function() {
+                    const estadoFila = $(this).find("td:eq(8)").text().trim(); // Suponemos que el estado está en la columna 9 (índice 8)
+
+                    if (estadoSeleccionado === "0") {
+                        // Mostrar todas las filas si se selecciona "TODOS"
+                        $(this).show();
+                    } else {
+                        // Comparar el valor seleccionado con el estado de la fila
+                        if (estadoFila === obtenerEstado(estadoSeleccionado)) {
+                            $(this).show();  // Mostrar la fila si coincide el estado
+                        } else {
+                            $(this).hide();  // Ocultar la fila si no coincide
+                        }
+                    }
+                });
+            });
+
+            // Función para devolver el estado en texto en función del valor del selector
+            function obtenerEstado(valor) {
+                switch (valor) {
+                    case "1":
+                        return "ACEPTADO";
+                    case "2":
+                        return "DENEGADO";
+                    case "3":
+                        return "EN ESPERA";
+                    case "4":
+                        return "ESPERA SOLICITUD";
+                    case "5":
+                        return "DEVUELTO";
+                    default:
+                        return "";
+                }
+            }
         });
     </script>
 </body>

@@ -1,22 +1,24 @@
 body {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
     background: url('../images/background-image6.jpg') no-repeat center center fixed;
     background-size: cover;
     font-family: "Open Sans", sans-serif;
     line-height: 1.25;
 }
 
-.contenedor_principal {
-  margin-top: 400px;
+#contenedor_padre {
+  position: relative; /* Cambia a 'relative' en lugar de 'absolute' */
+  margin-bottom: 50px; /* Puedes agregar un margen inferior para controlar la distancia al fondo */
+  padding-bottom: 20px; /* Espacio adicional en la parte inferior */
+  width: 90%; /* Para asegurarte de que se mantenga dentro del ancho de la página */
+  margin-left: auto;
+  margin-right: auto; /* Centrará el contenedor horizontalmente */
 }
 
 table {
     border: 1px solid #ccc;
     border-collapse: collapse;
-    width: 90%;
+    width: 100%;
     table-layout: fixed;
     margin: 0 auto;
     margin-top: 1%;
@@ -112,7 +114,6 @@ table {
 /* Reglas para los botones */
 .boton_tabla {
     padding: 12px;
-    margin-left: 5%;
     background: linear-gradient(180deg, rgba(125,253,255,1) 0%, rgba(149,149,149,1) 100%);
     border: none;
     border-radius: 0px;

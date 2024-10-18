@@ -25,7 +25,7 @@ class SolicitudesController extends AbstractController
     #[Route("/mostrar_solicitudes", name: "mostrar_solicitudes")]
     public function mostrar_solicitudes(Request $request, EntityManagerInterface $em)
     {
-        $prestamos = $em->getRepository(Prestamo::class)->findBy(['estado' => "EN ESPERA"]);
+        $prestamos = $em->getRepository(Prestamo::class)->findAll();
         
         // Proseguimos con pasar los datos al controlador y mandárselos a la plantilla
         return $this->render('administrar_solicitudes.html.twig', [
@@ -54,29 +54,6 @@ class SolicitudesController extends AbstractController
             "calidad_admin" => 0,
             "devolver" => 0,
             "admin_devolver" => 0
-        ]);
-    }
-
-
-
-    // Para que el usuario pueda ver sus solicitudes y ver si está aprobadas o no.
-    #[Route("/administrar_devoluciones", name: "administrar_devoluciones")]
-    public function administrar_devoluciones(Request $request, EntityManagerInterface $em)
-    {
-        $user = $this->getUser();
-
-        // Forzar la inicialización de la entidad Usuario
-        // $em->initializeObject($user);
-
-        $prestamos = $em->getRepository(Prestamo::class)->findBy(['usuarioPrestamo' => $user, 'estado' => "ESPERA DEVOLUCION"]);
-
-        // Proseguimos con pasar los datos al controlador y mandárselos a la plantilla
-        return $this->render('administrar_solicitudes.html.twig', [
-            "prestamos" => $prestamos,
-            "admin_soli" => 0,
-            "calidad_admin" => 1,
-            "devolver" => 0,
-            "admin_devolver" => 1
         ]);
     }
 

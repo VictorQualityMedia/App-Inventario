@@ -12,19 +12,17 @@
 </head>
 <body>
     {% include 'cabecera.html.twig' %}
-    <div class="contenedor_principal">
-        <div class="search-box">
-            <button class="btn-search"><i class="fas fa-search"></i></button>
-            <input type="text" class="input-search" placeholder="Filtra por nombre...">
-        </div>
+    <div id="contenedor_padre">
         <form id="prestamo-form">
             <div>
                 <button type="submit" class="boton_tabla boton_enviar">Enviar Préstamos</button>
                 <label for="evento"><strong>Evento:</strong></label>
                 <input type="text" name="evento" id="evento">
-
+                <div class="search-box">
+                    <button type="button" class="btn-search"><i class="fas fa-search"></i></button>
+                    <input type="text" class="input-search" placeholder="Filtra por nombre...">
+                </div>
             </div>
-            
             <table>
                 <thead>
                     <tr>

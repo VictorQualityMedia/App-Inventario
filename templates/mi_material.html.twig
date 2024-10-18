@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrar Solicitudes</title>
+    <link rel="stylesheet" href="{{ asset('css/selector.css') }}">
     <link rel="stylesheet" href="{{ asset('css/administrar_solicitudes.css') }}">
     <link rel="stylesheet" href="{{ asset('css/buscador.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -12,9 +13,19 @@
 </head>
 <body>
     {% include 'cabecera.html.twig' %}
-    <div>
+    <div id="contenedor_principal">
         <button type="button" class="boton_tabla botones-top" id="devolver_material">Devolver</button>
         <button type="button" class="boton_tabla" id="seleccionar_todos">Seleccionar todo</button>
+        <div class="selector_estados">
+                <select>
+                    <option selected value="0">TODOS</option>
+                    <option value="1">ACEPTADO</option>
+                    <option value="2">DENEGADO</option>
+                    <option value="3">EN ESPERA</option>
+                    <option value="4">ESPERA SOLICITUD</option>
+                    <option value="5">DEVUELTO</option>
+                </select>
+            </div>
         <div class="search-box">
             <button class="btn-search"><i class="fas fa-search"></i></button>
             <input type="text" class="input-search" placeholder="Filtra por evento...">
@@ -44,7 +55,7 @@
                             <td>
                             {% if prestamo.estado == "ACEPTADO" %}
                             <input type="hidden" name="id_prestamo" value="{{prestamo.idPrestamo}}">
-                            <input type="number" name="cantidad" min="1" max = {{prestamo.cantidad}} value = "{{ prestamo.cantidad }}">
+                            <input type="number" name="cantidad" class="cantidad-input" min="1" max = {{prestamo.cantidad}} value = "{{ prestamo.cantidad }}">
                             {% else %}
                             {{ prestamo.cantidad }}
                             {% endif %}
@@ -201,6 +212,44 @@
                 }
             });
         });
+
+        // Evento del selector de estado
+            $('.selector_estados select').on('change', function() {
+                const estadoSeleccionado = $(this).val(); // Obtener el valor seleccionado en el dropdown
+                $('tbody tr').each(function() {
+                    const estadoFila = $(this).find("td:eq(6)").text().trim(); // Suponemos que el estado está en la columna 9 (índice 8)
+
+                    if (estadoSeleccionado === "0") {
+                        // Mostrar todas las filas si se selecciona "TODOS"
+                        $(this).show();
+                    } else {
+                        // Comparar el valor seleccionado con el estado de la fila
+                        if (estadoFila === obtenerEstado(estadoSeleccionado)) {
+                            $(this).show();  // Mostrar la fila si coincide el estado
+                        } else {
+                            $(this).hide();  // Ocultar la fila si no coincide
+                        }
+                    }
+                });
+            });
+
+            // Función para devolver el estado en texto en función del valor del selector
+            function obtenerEstado(valor) {
+                switch (valor) {
+                    case "1":
+                        return "ACEPTADO";
+                    case "2":
+                        return "DENEGADO";
+                    case "3":
+                        return "EN ESPERA";
+                    case "4":
+                        return "ESPERA SOLICITUD";
+                    case "5":
+                        return "DEVUELTO";
+                    default:
+                        return "";
+                }
+            }
 
         });
     </script>

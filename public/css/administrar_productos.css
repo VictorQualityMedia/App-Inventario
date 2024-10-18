@@ -1,29 +1,27 @@
 body {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
     background: url('../images/background-image6.jpg') no-repeat center center fixed;
     background-size: cover;
-    margin: 20px; /* Ajusta el margen superior del cuerpo */
-    padding-top: 20px; /* Espacio para evitar que se pegue al borde */
+    font-family: "Open Sans", sans-serif;
+    line-height: 1.25;
 }
 
 table {
     border: 1px solid #ccc;
     border-collapse: collapse;
-    width: 90%;
+    width: 100%;
     table-layout: fixed;
-    margin-top: 400px;
     margin: 0 auto;
   }
   
   #contenedor_padre {
-    margin-top: 400px;
-  }
-
-  #eliminar_productos, #eliminar_todos {
-    margin-top: 400px;
+    position: relative; /* Cambia a 'relative' en lugar de 'absolute' */
+    margin-top: 100px; /* Ajusta este valor según lo que necesites */
+    margin-bottom: 50px; /* Puedes agregar un margen inferior para controlar la distancia al fondo */
+    padding-bottom: 20px; /* Espacio adicional en la parte inferior */
+    width: 90%; /* Para asegurarte de que se mantenga dentro del ancho de la página */
+    margin-left: auto;
+    margin-right: auto; /* Centrará el contenedor horizontalmente */
   }
 
   table tr {
@@ -51,6 +49,7 @@ table {
     letter-spacing: .1em;
     text-transform: uppercase;
   }
+  
   
   @media screen and (max-width: 600px) {
     table {
@@ -123,7 +122,6 @@ table {
 
 /* Reglas para los botones */
 .boton_tabla {
-    display: inline-flex;
     padding: 12px;
     margin-bottom: 1%;
     background: linear-gradient(180deg, rgba(125,253,255,1) 0%, rgba(149,149,149,1) 100%);
@@ -139,17 +137,7 @@ table {
     background-position: 0% 100%; /* Posición inicial del fondo (parte superior) */
 }
 
-.boton_tabla:first-child {
-  margin-left: 5%;
-}
-
 /* Efecto al pasar el mouse */
 .boton_tabla:hover {
   background-position: 0% 0%; /* Cambia a la posición final (parte inferior) */
-}
-
-/* general styling */
-body {
-  font-family: "Open Sans", sans-serif;
-  line-height: 1.25;;
 }

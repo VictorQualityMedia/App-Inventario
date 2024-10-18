@@ -92,7 +92,7 @@ class EditarPrestamoController extends AbstractController
             $em->flush();
 
             // Redirigir de vuelta a la página de solicitudes después de la edición
-            return $this->redirectToRoute('mostrar_solicitudes'); // Suponiendo que 'mostrar_solicitudes' es la ruta
+            return $this->redirectToRoute('mi_material'); // Suponiendo que 'mostrar_solicitudes' es la ruta
 
         }
         else {

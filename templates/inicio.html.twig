@@ -12,27 +12,15 @@
     {% include 'cabecera.html.twig' %}
     <div class="contenedor_padre">
         <div class="contenedor_hijo">
-            <a href="{{path('ctrl_login')}}">
-                <img src="{{ asset('images/non-background-img/home.jpg') }}" alt=""><br>
-                <p>Home</p>
-            </a>  
-        </div>
-        <div class="contenedor_hijo">
             <a href="{{path('mostrar_inventario')}}">
                 <img src="{{ asset('images/non-background-img/material.jpg') }}" alt=""><br>
                 <p>Material</p>
             </a>  
         </div>
         <div class="contenedor_hijo">
-            <a href="{{path('mostrar_solicitudes_user')}}">
+            <a href="{{path('mi_material')}}">
                 <img src="{{ asset('images/non-background-img/solicitudes.jpg') }}" alt=""><br>
                 <p>Mis peticiones</p>
-            </a>  
-        </div>
-        <div class="contenedor_hijo">
-            <a href="{{path('mi_material')}}">
-                <img src="{{ asset('images/non-background-img/mytools.jpg') }}" alt=""><br>
-                <p>Mis herramientas</p>
             </a>  
         </div>
         {% if is_granted('ROLE_ADMIN') %}

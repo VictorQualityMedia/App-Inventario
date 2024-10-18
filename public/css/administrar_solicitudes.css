@@ -13,7 +13,6 @@ table {
     width: 90%;
     table-layout: fixed;
     margin: 0 auto;
-    margin-bottom: 10%;
   }
   
   table tr {
@@ -158,6 +157,11 @@ body {
 }
 
 /* Para el buscador */
-.search-box {
+/* .search-box {
   margin-top: -60px;
+} */
+
+.selector_estados {
+  display: inline-flex;
+  margin-left: 10px;
 }

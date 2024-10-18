@@ -57,26 +57,7 @@ class SolicitudesController extends AbstractController
         ]);
     }
 
-    // Para que el usuario pueda ver sus solicitudes y ver si está aprobadas o no.
-    #[Route("/mi_material", name: "mi_material")]
-    public function mi_material(Request $request, EntityManagerInterface $em)
-    {
-        $user = $this->getUser();
 
-        // Forzar la inicialización de la entidad Usuario
-        // $em->initializeObject($user);
-
-        $prestamos = $em->getRepository(Prestamo::class)->findBy(['usuarioPrestamo' => $user, 'estado' => "ACEPTADO"]);
-
-        // Proseguimos con pasar los datos al controlador y mandárselos a la plantilla
-        return $this->render('administrar_solicitudes.html.twig', [
-            "prestamos" => $prestamos,
-            "admin_soli" => 0,
-            "calidad_admin" => 0,
-            "devolver" => 1,
-            "admin_devolver" => 0
-        ]);
-    }
 
     // Para que el usuario pueda ver sus solicitudes y ver si está aprobadas o no.
     #[Route("/administrar_devoluciones", name: "administrar_devoluciones")]

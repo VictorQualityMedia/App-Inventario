@@ -14,7 +14,12 @@
     {% include 'cabecera.html.twig' %}
     {% if is_granted('ROLE_ADMIN') %}
     <div class="contenedor_padre">
-        
+        <div class="contenedor_hijo">
+            <a href="{{path('ctrl_login')}}">
+                <img src="{{ asset('images/non-background-img/home.jpg') }}" alt=""><br>
+                <p>Home</p>
+            </a>  
+        </div>
         <div class="contenedor_hijo">
             <a href="{{path('registro')}}">
                 <img src="{{ asset('images/non-background-img/user_register.jpg') }}" alt=""><br>

@@ -21,20 +21,26 @@
                         <input type="hidden" name="producto_id_antiguo" value = {{ prestamo.codProducto.sn }}>
                         <select name="producto" id="producto_id">
                             {% for producto in productos %}
-                                <option value="{{ producto.sn }}">{{producto.sn}} - {{producto.nombre}}</option>
+                                {% if prestamo.codProducto.nombre == producto.nombre %}
+                                    <option value="{{ producto.sn }}" selected>{{producto.sn}} - {{producto.nombre}}</option>
+                                {% else %}
+                                    <option value="{{ producto.sn }}">{{producto.sn}} - {{producto.nombre}}</option>
+                                {% endif %}
                             {% endfor %}
                         </select>
                     </td>
                     <td>
                         <label for="cantidad">Cantidad</label>
-                        <input type="number" min="1" max="{{ prestamo.codProducto.stock }}" id="cantidad_id" class="cantidad-input" name="cantidad" data-sn="{{ prestamo.codProducto.sn }}">
+                        <input type="number" min="1" max="{{ prestamo.codProducto.stock }}" id="cantidad_id" class="cantidad-input" name="cantidad" data-sn="{{ prestamo.codProducto.sn }}" value="{{prestamo.cantidad}}">
                     </td>
                 </tr>
                 <tr>
+                {% if is_granted('ROLE_ADMIN') %}
                     <td>
                         <label for="fecha_devolucion">Fecha devolución:</label>
                         <input type="date" name="fecha_devolucion" id="fecha_devolucion">
                     </td>
+                {% endif %}
                 </tr>
                 <tr>
                     <td><button type="submit" class="boton_tabla">Editar</button></td>

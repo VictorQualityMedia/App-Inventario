@@ -22,8 +22,7 @@
           <div class="menu-items">
             <li><a href="{{path('ctrl_login')}}">Home</a></li>
             <li><a href="{{path('mostrar_inventario')}}">Solicitar material</a></li>
-            <li><a href="{{path('mostrar_solicitudes_user')}}">Mis peticiones</a></li>
-            <li><a href="{{path('mi_material')}}">Mi material</a></li>
+            <li><a href="{{path('mi_material')}}">Mis peticiones</a></li>
             {% if is_granted('ROLE_ADMIN') %}
             <li><a href="{{path('home_admin')}}">Zona adminstrador</a></li>
             {% endif %}

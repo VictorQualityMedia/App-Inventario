@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrar Solicitudes</title>
-    <link rel="stylesheet" href="{{ asset('css/selector.css') }}">
     <link rel="stylesheet" href="{{ asset('css/administrar_solicitudes.css') }}">
     <link rel="stylesheet" href="{{ asset('css/buscador.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -13,55 +12,47 @@
 </head>
 <body>
     {% include 'cabecera.html.twig' %}
-    {% if is_granted('ROLE_ADMIN') %}
     <div>
-            <button type="button" class="boton_tabla botones-top" id="aceptar_seleccionados">Aceptar seleccionados</button>
-            <button type="button" class="boton_tabla botones-top" id="denegar_seleccionados">Denegar seleccionados</button> 
-            <button type="button" class="boton_tabla botones-top" id="aceptar_devoluciones">Confirmar devoluciones</button>
-            <button type="button" class="boton_tabla" id="seleccionar_todos">Seleccionar todo</button>
-            <div class="selector_estados">
-                <select>
-                    <option selected value="0">TODOS</option>
-                    <option value="1">ACEPTADO</option>
-                    <option value="2">DENEGADO</option>
-                    <option value="3">EN ESPERa</option>
-                    <option value="4">ESPERA SOLICITUD</option>
-                    <option value="5">DEVUELTO</option>
-                </select>
-            </div>
-            <div class="search-box">
-                <button class="btn-search"><i class="fas fa-search"></i></button>
-                <input type="text" class="input-search" placeholder="Filtra por evento...">
-            </div>
+        <button type="button" class="boton_tabla botones-top" id="devolver_material">Devolver</button>
+        <button type="button" class="boton_tabla" id="seleccionar_todos">Seleccionar todo</button>
+        <div class="search-box">
+            <button class="btn-search"><i class="fas fa-search"></i></button>
+            <input type="text" class="input-search" placeholder="Filtra por evento...">
+        </div>
         <div>
+            <!-- Valor para seleccionar la caja -->
+            <input type="hidden" name="posicion_evento" id="posicion_evento" value="td:eq(5)">
             <table>
                 <thead>
                     <tr>
                         <th scope="col">Seleccionar</th>
-                        <th scope="col">Id solicitud</th>
                         <th scope="col">Nombre del producto</th>
                         <th scope="col">Cantidad</th>
                         <th scope="col">Fecha préstamo</th>
                         <th scope="col">Fecha devolución</th>
-                        <th scope="col">Usuario solicitante</th>
                         <th scope="col">Evento</th>
                         <th scope="col">Estado</th>
                         <th scope="col">Prestamista</th>
-                        <th scope="col">Modificar</th>
+                        <th scope="col">Modificar o devolucion parcial</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for prestamo in prestamos %}
                         <tr>
                             <td><input type="checkbox" class="checkbox-producto" data-id="{{ prestamo.idPrestamo }}"></td>
-                            <td>{{ prestamo.idPrestamo }}</td>
                             <td>{{ prestamo.codProducto.nombre }}</td>
-                            <td>{{ prestamo.cantidad }}</td>
+                            <td>
+                            {% if prestamo.estado == "ACEPTADO" %}
+                            <input type="hidden" name="id_prestamo" value="{{prestamo.idPrestamo}}">
+                            <input type="number" name="cantidad" min="1" max = {{prestamo.cantidad}} value = "{{ prestamo.cantidad }}">
+                            {% else %}
+                            {{ prestamo.cantidad }}
+                            {% endif %}
+                            </td>
                             <td>{{ prestamo.fechaPrestamo|date('d-m-Y') }}</td>
                             <td class="fecha-devolucion" data-fecha="{{ prestamo.fechaDevolucion|date('Y-m-d') }}">
                                 {{ prestamo.fechaDevolucion|date('d-m-Y') }}
                             </td>
-                            <td>{{ prestamo.usuarioPrestamo.email }}</td>
                             <td>
                                 {% if prestamo.evento is null %}
                                     -
@@ -82,7 +73,13 @@
                                     {# Inputs ocultos para extraer valores necesarios #}
                                     <input type="hidden" name="sn" value="{{ prestamo.codProducto.sn }}" id="sn">
                                     <input type="hidden" name="id_prestamo" value="{{ prestamo.idPrestamo }}" id="id_prestamo">
+                                    {% if prestamo.estado == "EN ESPERA" %}
                                     <button type="submit" class="boton_tabla">Modificar</button>
+                                    {% elseif prestamo.estado == "ACEPTADO" %}
+                                    <button type="submit" class="boton_tabla devolver_parcial">Devolver</button>
+                                    {% else %}
+                                    -
+                                    {% endif %}
                                 </form>
                             </td>
                         </tr>
@@ -91,17 +88,17 @@
             </table>
         </div>    
     </div>
-    {% endif %}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
             // Evento de tecla al escribir en la caja de búsqueda
             $('.input-search').on('keyup', function() {
+                let posicion_evento = document.getElementById("posicion_evento").value;
                 let searchQuery = $(this).val().toLowerCase();
 
                 // Iterar sobre las filas de la tabla
                 $('tbody tr').each(function() {
-                    const nombreProducto = $(this).find("td:eq(7)").text().toLowerCase(); // Asume que el nombre del producto está en la columna 2 (índice 1)
+                    const nombreProducto = $(this).find(posicion_evento).text().toLowerCase(); // Asume que el nombre del producto está en la columna 2 (índice 1)
                     
                     // Si el nombre contiene la búsqueda, mostrar la fila. Si no, ocultarla.
                     if (nombreProducto.includes(searchQuery)) {
@@ -136,67 +133,7 @@
                 todosCheckboxes.prop('checked', !todosSeleccionados);
             });
 
-            // Acepta los préstamos seleccionados
-            $('#aceptar_seleccionados').click(function() {
-                const selectedIds = [];
-                $('.checkbox-producto:checked').each(function() {
-                    selectedIds.push($(this).data('id'));
-                });
-
-                if (selectedIds.length > 0) {
-                    $.ajax({
-                        url: '{{ path("procesar_aceptar") }}',
-                        method: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify({ ids: selectedIds }),
-                        success: function(response) {
-                            if (response.status === 'success') {
-                                alert("Validado.");
-                            }
-                            location.reload(); // Recargar sin verificar la respuesta
-                        },
-                        error: function(xhr) {
-                            if (xhr.responseJSON && xhr.responseJSON.errors) {
-                                let errors = xhr.responseJSON.errors.join('<br>');
-                                alert("Error: " + errors);
-                            } 
-                            else {
-                                alert("Ha ocurrido un error inesperado.");
-                            }
-                        }
-                    });
-                } else {
-                    alert('No has seleccionado ninguna solicitud.');
-                }
-            });
-
-            $('#denegar_seleccionados').click(function() {
-                const selectedIds = [];
-                $('.checkbox-producto:checked').each(function() {
-                    selectedIds.push($(this).data('id'));
-                });
-
-                if (selectedIds.length > 0) {
-                    $.ajax({
-                        url: '{{ path('procesar_denegar') }}',
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify({ ids: selectedIds }),
-                        success: function(response) {
-                            // Manejo de la respuesta exitosa
-                            console.log('Solicitud procesada:', response);
-                            location.reload(); // Recargar sin verificar la respuesta
-                        },
-                        error: function(xhr) {
-                            // Manejo de error
-                            console.error('Error en la solicitud:', xhr);
-                        }
-                    });
-                } else {
-                    alert('No has seleccionado ninguna solicitud.');
-                }
-            });
-
+            // Devuelve todos los préstamos seleccionados
             $('#devolver_material').click(function() {
                 const selectedIds = [];
                 $('.checkbox-producto:checked').each(function() {
@@ -224,32 +161,47 @@
                 }
             });
 
-            $('#aceptar_devoluciones').click(function() {
-                const selectedIds = [];
-                $('.checkbox-producto:checked').each(function() {
-                    selectedIds.push($(this).data('id'));
-                });
+            // Evento para manejar la devolución parcial
+        $('.devolver_parcial').on('click', function(event) {
+            event.preventDefault(); // Prevenir el envío normal del formulario
 
-                if (selectedIds.length > 0) {
-                    $.ajax({
-                        url: '{{ path('procesar_confirmar_devolucion') }}',
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify({ ids: selectedIds }),
-                        success: function(response) {
-                            // Manejo de la respuesta exitosa
-                            console.log('Solicitud procesada:', response);
-                            location.reload(); // Recargar sin verificar la respuesta
-                        },
-                        error: function(xhr) {
-                            // Manejo de error
-                            console.error('Error en la solicitud:', xhr);
-                        }
-                    });
-                } else {
-                    alert('No has seleccionado ninguna solicitud.');
+            // Encontramos la fila (tr) en la que se encuentra el botón que fue clickeado
+            const row = $(this).closest('tr');
+
+            // Extraemos los valores de los inputs dentro de esa fila
+            const idPrestamo = row.find('input[name="id_prestamo"]').val();
+            const cantidad = row.find('input[name="cantidad"]').val();
+
+            console.log(idPrestamo + " " + cantidad);
+
+            // Comprobamos si los valores fueron correctamente obtenidos
+            console.log("ID Préstamo:", idPrestamo);
+            console.log("Cantidad a devolver:", cantidad);
+
+            if (!idPrestamo || !cantidad) {
+                alert("Error: No se han podido obtener los valores de ID o cantidad.");
+                return;
+            }
+
+            // Realizamos la solicitud AJAX para procesar la devolución parcial
+            $.ajax({
+                url: '{{ path('devolucion_parcial') }}', // La ruta a la acción del controlador
+                type: 'POST',
+                data: {
+                    id_prestamo: idPrestamo,
+                    cantidad: cantidad
+                },
+                success: function(response) {
+                    alert('Devolución procesada correctamente.');
+                    location.reload(); // Recargar la página para reflejar los cambios
+                },
+                error: function(xhr) {
+                    alert('Hubo un error al procesar la devolución.');
+                    console.error('Error en la solicitud:', xhr);
                 }
             });
+        });
+
         });
     </script>
 </body>

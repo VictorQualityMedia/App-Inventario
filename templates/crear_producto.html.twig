@@ -66,10 +66,43 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
     $(document).ready(function() {
-    $('form').submit(function(event) {
-        alert("El registro ha cambiado con éxito.");
+        // Función para validar que la cantidad sea igual a la suma de stock, prestado y malgastado
+        $('form').submit(function(event) {
+            var cantidad = parseInt($('#cantdad').val());
+            var stock = parseInt($('#stock').val());
+            var prestado = parseInt($('#prestado').val());
+            var malgastado = parseInt($('#malgastado').val());
+
+            if (cantidad !== (stock + prestado + malgastado)) {
+                event.preventDefault();
+                alert("La cantidad total debe ser igual a la suma de stock, prestados y malgastados.");
+            } else {
+                alert("El producto ha sido creado con éxito.");
+            }
+        });
     });
-});
+
+    $(document).ready(function() {
+        let snBuffer = ''; // Almacena el SN temporalmente
+        let snInputField = $('input[name="sn_producto"]'); // Campo de SN
+
+        // Escuchar las entradas de teclado en toda la página
+        $(document).on('keypress', function(event) {
+            let key = String.fromCharCode(event.which);
+
+            // Si el usuario presiona "Enter" (o si tu lector usa un código diferente, ajusta esto)
+            if (event.which === 13) { // Código 13 es "Enter"
+                if (snBuffer.length > 0) {
+                    // Rellenamos el campo de SN
+                    snInputField.val(snBuffer);
+                    snBuffer = ''; // Limpiar el buffer después de usarlo
+                }
+            } else {
+                // Almacenar el carácter en el buffer
+                snBuffer += key;
+            }
+        });
+    });
     </script>
 </body>
 </html>

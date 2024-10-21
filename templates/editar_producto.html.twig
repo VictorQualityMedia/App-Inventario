@@ -37,7 +37,7 @@
                 <tr>
                     <td>
                         <label for="cantdad">Cantidad:</label><br>
-                        <input type="number" min="1" id="cantdad" class="cantidad-input" name="cantdad" placeholder="{{producto.cantidad}}">
+                        <input type="number" min="1" id="cantidad" class="cantidad-input" name="cantidad" placeholder="{{producto.cantidad}}">
                     </td>
                     <td>
                         <label for="stock">Stock:</label>
@@ -60,12 +60,47 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-    // Para que el administrador no pueda introducir una fecha de devolución menor a la actual
-    // Después de aquello, se interpreta que está bien y muestra una notificación de que todo ha salido bien
     $(document).ready(function() {
-        // Función para informar al usuario
+        // Función para obtener el valor de un input o su placeholder si está vacío
+        function getInputOrPlaceholder($input) {
+            return $input.val() ? parseInt($input.val()) : parseInt($input.attr('placeholder'));
+        }
+
+        // Función para validar que la cantidad sea igual a la suma de stock, prestado y malgastado
         $('form').submit(function(event) {
-            alert("El registro ha cambiado con éxito.");
+            var cantidad = getInputOrPlaceholder($('#cantidad'));
+            var stock = getInputOrPlaceholder($('#stock'));
+            var prestado = getInputOrPlaceholder($('#prestado'));
+            var malgastado = getInputOrPlaceholder($('#malgastado'));
+
+            if (cantidad !== (stock + prestado + malgastado)) {
+                event.preventDefault();
+                alert("La cantidad total debe ser igual a la suma de stock, prestados y malgastados.");
+            } else {
+                alert("El registro ha cambiado con éxito.");
+            }
+        });
+    });
+
+    $(document).ready(function() {
+        let snBuffer = ''; // Almacena el SN temporalmente
+        let snInputField = $('input[name="sn_producto"]'); // Campo de SN
+
+        // Escuchar las entradas de teclado en toda la página
+        $(document).on('keypress', function(event) {
+            let key = String.fromCharCode(event.which);
+
+            // Si el usuario presiona "Enter" (o si tu lector usa un código diferente, ajusta esto)
+            if (event.which === 13) { // Código 13 es "Enter"
+                if (snBuffer.length > 0) {
+                    // Rellenamos el campo de SN
+                    snInputField.val(snBuffer);
+                    snBuffer = ''; // Limpiar el buffer después de usarlo
+                }
+            } else {
+                // Almacenar el carácter en el buffer
+                snBuffer += key;
+            }
         });
     });
     </script>

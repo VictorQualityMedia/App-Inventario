@@ -141,3 +141,39 @@ table {
 .boton_tabla:hover {
   background-position: 0% 0%; /* Cambia a la posición final (parte inferior) */
 }
+
+/* Para la pantalla de impresión */
+@media print {
+  body {
+    width: 100%;
+  }
+  #contenedor_principal {
+    width: 100%;
+  }
+  /* Ocultar botones, buscador, y otros elementos que no son necesarios al imprimir */
+  .boton_tabla, .download-button, .search-box, .selector_estados, nav, label, #evento, .btn-search {
+    display: none;
+}
+
+  /* Reglas para ocultar las propias columnas */
+  table th:nth-child(1),
+  table td:nth-child(1) {
+      display: none;
+  }
+
+  table th:nth-child(2),
+  table td:nth-child(2) {
+      display: none;
+  }
+
+  table th:nth-last-child(1),
+  table td:nth-last-child(1) {
+      display: none;
+  }
+
+  /* Ajustes adicionales de estilo para la tabla */
+  table {
+      width: 100%;
+      font-size: 12px;
+  }
+}

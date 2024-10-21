@@ -151,3 +151,37 @@ label {
 .search-box {
   margin-top: 100px;
 }
+
+/* Para la pantalla de impresión */
+@media print {
+  body {
+    width: 100%;
+    margin: 0; /* Asegúrate de que no haya márgenes externos */
+    padding: 20px; /* Espacio adicional para el contenido */
+  }
+
+  #contenedor_principal {
+    width: 100%;
+  }
+  /* Ocultar botones, buscador, y otros elementos que no son necesarios al imprimir */
+  .boton_tabla, .download-button, .search-box, .selector_estados, nav, label, #evento, .btn-search {
+      display: none;
+  }
+
+  /* Ajustes adicionales de estilo para la tabla */
+  table {
+      width: 100%;
+      font-size: 12px;
+      border-collapse: collapse; /* Eliminar espacio entre celdas */
+  }
+
+  th, td {
+    padding: 8px; /* Espacio dentro de las celdas */
+    border: 1px solid #000; /* Asegura que haya bordes visibles en la impresión */
+  }
+
+  @page {
+    margin: 20mm; /* Ajusta este valor según sea necesario */
+  }
+  
+}

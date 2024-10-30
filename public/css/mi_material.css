@@ -171,7 +171,7 @@ table {
       border-bottom: 0;
     }
 
-    .selector_estados, .search-box, #aceptar_seleccionados, #denegar_seleccionados, #aceptar_devoluciones, #seleccionar_todos, #boton-imprimir {
+    .selector_estados, .search-box {
       display: flex;
       margin-top: 10px;
     }

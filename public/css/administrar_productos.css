@@ -49,6 +49,46 @@ table {
     letter-spacing: .1em;
     text-transform: uppercase;
   }
+
+    /* Reglas para el selector numérico */
+    .numeric_selector {
+      max-width: 50px;
+      border-radius: 0px;
+      height: 30px;
+    }
+    
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: button; /* Mantenemos la apariencia de botón para que las flechas sean visibles */
+      height: 100%;
+      width: 20px; /* Ajusta el ancho según tus necesidades */
+      height: 30px;
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      color: #333;
+    }
+  
+  /* Reglas para los botones */
+  .boton_tabla {
+      padding: 12px;
+      margin-bottom: 1%;
+      background: linear-gradient(180deg, rgba(125,253,255,1) 0%, rgba(149,149,149,1) 100%);
+      border: none;
+      border-radius: 0px;
+      font-size: 1rem;
+      font-weight: 600;
+      box-shadow: 0 2px 2px rgba(0, 0, 0, 0.5); /* Sombra ajustada */
+      color: white;
+      cursor: pointer;
+      transition: background-position 0.5s ease; /* Transición suave para el fondo */
+      background-size: 100% 200%; /* Duplicar el tamaño del fondo para animarlo verticalmente */
+      background-position: 0% 100%; /* Posición inicial del fondo (parte superior) */
+  }
+  
+  /* Efecto al pasar el mouse */
+  .boton_tabla:hover {
+    background-position: 0% 0%; /* Cambia a la posición final (parte inferior) */
+  }
   
   
   @media screen and (max-width: 600px) {
@@ -75,6 +115,7 @@ table {
       border-bottom: 3px solid #ddd;
       display: block;
       margin-bottom: .625em;
+      width: 100%;
     }
     
     table td {
@@ -82,6 +123,7 @@ table {
       display: block;
       font-size: .8em;
       text-align: right;
+      max-width: 100%;
     }
     
     table td::before {
@@ -99,48 +141,19 @@ table {
       border-bottom: 0;
     }
 
+    #seleccionar_todo, #eliminar_productos, #boton-imprimir, .search-box {
+      display: flex;
+      margin-top: 10px;
+    }
+
+    .search-box {
+      float: left;
+      margin-bottom: 10px;
+    }
     
   }
 
-  /* Reglas para el selector numérico */
-  .numeric_selector {
-    max-width: 50px;
-    border-radius: 0px;
-    height: 30px;
-  }
-  
-  input[type="number"]::-webkit-outer-spin-button,
-  input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: button; /* Mantenemos la apariencia de botón para que las flechas sean visibles */
-    height: 100%;
-    width: 20px; /* Ajusta el ancho según tus necesidades */
-    height: 30px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    color: #333;
-  }
 
-/* Reglas para los botones */
-.boton_tabla {
-    padding: 12px;
-    margin-bottom: 1%;
-    background: linear-gradient(180deg, rgba(125,253,255,1) 0%, rgba(149,149,149,1) 100%);
-    border: none;
-    border-radius: 0px;
-    font-size: 1rem;
-    font-weight: 600;
-    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.5); /* Sombra ajustada */
-    color: white;
-    cursor: pointer;
-    transition: background-position 0.5s ease; /* Transición suave para el fondo */
-    background-size: 100% 200%; /* Duplicar el tamaño del fondo para animarlo verticalmente */
-    background-position: 0% 100%; /* Posición inicial del fondo (parte superior) */
-}
-
-/* Efecto al pasar el mouse */
-.boton_tabla:hover {
-  background-position: 0% 0%; /* Cambia a la posición final (parte inferior) */
-}
 
 /* Para la pantalla de impresión */
 @media print {

@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrar Solicitudes</title>
     <link rel="stylesheet" href="{{ asset('css/selector.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/administrar_solicitudes.css') }}">
     <link rel="stylesheet" href="{{ asset('css/buscador.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/mi_material.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <!-- Agrega Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -25,7 +25,7 @@
                     <option value="4">ESPERA DEVOLUCION</option>
                     <option value="5">DEVUELTO</option>
                 </select>
-            </div>
+        </div>
         <div class="search-box">
             <button class="btn-search"><i class="fas fa-search"></i></button>
             <input type="text" class="input-search" placeholder="Filtra por evento...">
@@ -50,7 +50,13 @@
                 <tbody>
                     {% for prestamo in prestamos %}
                         <tr>
-                            <td><input type="checkbox" class="checkbox-producto" data-id="{{ prestamo.idPrestamo }}"></td>
+                            <td>
+                            {% if prestamo.estado == "ACEPTADO" %}
+                                <input type="checkbox" class="checkbox-producto" data-id="{{ prestamo.idPrestamo }}">
+                            {% else %}
+                                -
+                            {% endif %}
+                            </td>
                             <td>{{ prestamo.codProducto.nombre }}</td>
                             <td>
                             {% if prestamo.estado == "ACEPTADO" %}

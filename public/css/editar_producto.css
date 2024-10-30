@@ -72,3 +72,26 @@ input {
   height: 2rem;
   width: 100%;
 }
+
+@media screen and (max-width: 600px) {
+  table {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Ajusta las columnas en pantallas pequeñas */
+    
+  }
+
+  tbody {
+    width: 100%;
+  }
+
+  table tr {
+      display: contents; /* Permite que cada fila actúe como una celda en el grid */
+      width: 100%;
+  }
+
+  table th, table td {
+      display: block;
+      width: 100%;
+  }
+  
+}

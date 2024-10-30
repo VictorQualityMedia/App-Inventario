@@ -152,6 +152,44 @@ label {
   margin-top: 100px;
 }
 
+@media (max-width:850px) {
+  .boton_enviar {
+    display: flex;
+    margin-bottom: 30px;
+  }
+  
+  label {
+    margin-left: 0px;
+  }
+  #evento {
+    display: flex;
+    margin-top: 10px;
+  }
+  .download-button {
+    display: flex;
+  }
+  .search-box {
+    display: flex;
+    float: left;
+    margin-bottom: 30px;
+  }
+  label, .download-button, .search-box {
+    margin-top: 30px;
+  }
+}
+
+@media (max-width:800px) {
+  .download-button {
+    display: flex;
+  }
+  
+  .search-box {
+    display: block;
+    float: left;
+    margin-bottom: 30px;
+  }
+}
+
 /* Para la pantalla de impresión */
 @media print {
   body {

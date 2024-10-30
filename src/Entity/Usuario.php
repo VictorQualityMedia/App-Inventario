@@ -85,4 +85,9 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     public function __toString() {
         return $this->email;
     }
+
+    // Nueva función para Symfony (necesaria)
+    public function getUsername(): string {
+        return $this->email; // o el campo que uses como identificador único
+    }
 }
